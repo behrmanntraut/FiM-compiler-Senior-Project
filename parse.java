@@ -7,18 +7,7 @@ import java.util.*;
 import java.io.*;
 public class parse{
 	public static void main(String args[]){
-		//Test stuffs
 		
-		parse tester = new parse(new String[]{"b","a","a","b","a"});
-		ArrayList<String> pass = new ArrayList<String>(Arrays.asList(input));
-		//System.out.println("Passing in: " + pass);
-		compute();
-		//System.out.println(pass);
-		if(comp.get(pass)==null){
-			System.out.println("False");
-		}else{
-			System.out.println("True");
-		}
 	}
 	
 	
@@ -44,9 +33,7 @@ public class parse{
 	static ArrayList<String> keys = new ArrayList<String>();
 	static HashMap<ArrayList<String>, HashSet<String>> comp = new HashMap<ArrayList<String>, HashSet<String>>();
 	public parse(String Input[]){
-		//TODO build the grammar loader directly into this file
 		input=Input;
-		
 	}
 	
 	/**
@@ -83,7 +70,6 @@ public class parse{
 	
 	public static void compute(){
 		firstLayer();
-		
 		for(int l=1;l<input.length;l++){//length
 			//System.out.println(l + "/" + input.length);
 			for(int s=0;s<input.length-l;s++){//start
@@ -92,18 +78,6 @@ public class parse{
 					for(int i=0;i<=l;i++){
 						span.add(input[s+i]);
 					}
-					
-					/*Shows how to view the correct current iteration
-					for(int i=0;i<=l;i++){
-						if(i==c){
-							System.out.print(input[s+i] + ",");
-						}else{
-						System.out.print(input[s+i]);
-						}
-					}
-					System.out.println();
-					*/
-					
 					//get all production
 					String[][] allProd = getProd(s,c,l);
 					//for each production, check if it is usable
@@ -111,7 +85,6 @@ public class parse{
 						if(comp.containsKey(span)){
 							//ignore
 						}else{
-							
 							comp.put(span,null);
 						}
 					}else{//can still look for valid things, may or may not exist
@@ -141,14 +114,9 @@ public class parse{
 							}
 						}
 					}
-					
-					
 				}
-				
-			
 			}
 		}
-		
 	}
 	
 	/**
@@ -173,7 +141,6 @@ public class parse{
 						comp.put(temp2,temp3);
 					}
 				}
-				
 			}
 		}
 	}
@@ -212,8 +179,6 @@ public class parse{
 		}catch(NullPointerException E){
 			return new String[0][0];//happens if one of the previous cells was a null
 		}
-		
-		
 	}
 	
 	/**
@@ -245,8 +210,4 @@ public class parse{
 			return true;
 		}
 	}
-	
-	
-	
-	
 }
