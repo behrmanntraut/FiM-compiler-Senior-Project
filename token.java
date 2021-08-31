@@ -94,7 +94,6 @@ public class token{
 		for(int l=0;l<line.size();l++){//for each line
 			for(int i=0;i<line.get(l).length;i++){//for each word in the line
 				//in an ideal world I would use regex here to find the patterns of words, but I do not know how to implement regex in java so we use more for loops
-				
 				//need to work  from MAX size down 
 				for(int s=MAX-1;s>=0;s--){//for each valid length
 					if(s+i>line.get(l).length){//looking for a phrase that is longer than the remaining number of words
@@ -103,27 +102,37 @@ public class token{
 						String keyWord = build(line.get(l),s,i);
 						if(varComing && (i==line.get(l).length-1)){//variable ended the new line
 							tokens.add("userVar");
-							keys.put(build(line.get(l),varS,line.size()-1),"userVar");
-							symbolTable.put(build(line.get(l),varS,line.size()-1),tokens.get(tokens.size()-2));
+							String toUse = build(line.get(l),varS,line.size()-1);
+							keys.put(toUse,"userVar");
+							symbolTable.put(toUse,tokens.get(tokens.size()-2));
+							System.out.println("Submitting: " + toUse);
 							varComing=false;
 						}
 						if(keys.containsKey(keyWord)){
 							
 							if(varComing){
 								//We have the next keyword so we have the end of the var defined by the user
-								varE=i;
+								varE=i-1;
+								System.out.println("Ending user defined value at: " + varE);
 								tokens.add("userVar");
-								keys.put(build(line.get(l),varS,varE-1),"userVar");
-								symbolTable.put(build(line.get(l),varS,varE-1),tokens.get(tokens.size()-2));
+								System.out.println(varS + "\t" + (varE-varS-1));
+								String users = build(line.get(l),varS,varE-varS+1);
+								keys.put(users,"userVar");
+								System.out.println("Submitting: " + users);
+								symbolTable.put(users,tokens.get(tokens.size()-2));
 								varComing=false;
 							}
 							i+=s;//used s extra letters, so need to move ahead s extra spaces
 							tokens.add(keys.get(keyWord));
 							if(specialKeyword(keys.get(keyWord))){
 								//the begining of the var is after this keyword ended
+								System.out.println(keyWord + " " + i);
 								varS=i;
+								System.out.println("Setting user defined value start to: " + varS);
+								
 								varComing=true;
 							}
+							break;
 						}
 					}
 				}
@@ -133,6 +142,7 @@ public class token{
 		tokens.remove(tokens.size()-1);//remove the last newline as the file ends
 		System.out.println(tokens);
 		System.out.println(keys);
+		System.out.println(symbolTable);
 		return null;
 		
 		
@@ -147,6 +157,30 @@ public class token{
 		for(int i=0;i<lines.size();i++){
 			temp.add(lines.get(i).split(" "));
 		}
+		//seperate out punctuation items
+		for(int i=0;i<temp.size();i++){//go through each line
+			Boolean seen = false;
+			String[] edited = new String[0];
+			int cont=0;
+			for(int j=0;j<temp.get(i).length;j++){//check if each word has punctuation at the end of it
+				if(seen && containsPunc(temp.get(i)[j])){
+					edited = sepPunc(edited,j+cont);
+					cont++;
+				}else if(containsPunc(temp.get(i)[j])){
+					edited = sepPunc(temp.get(i),j);
+					seen=true;
+					cont++;
+				}
+			}
+			if(edited.length>0){
+				temp.set(i,edited);
+			}
+		}
+		
+		
+		
+		
+		
 		return temp;
 	}
 	
@@ -182,6 +216,75 @@ public class token{
 		}
 		//no user defined names incoming. very nice
 		return false;
+	}
+	
+	/**
+	*Checks if a given string has a punctuation at the end of it
+	*@param str the string to check
+	*@return true if there is a punction at the end of the string provided
+	*/
+	private Boolean containsPunc(String str){
+		int x = str.length()-1;
+		if(str.charAt(x)==(',')){
+			return true;
+		}else if(str.charAt(x)==('!')){
+			return true;
+		}else if(str.charAt(x)==('.')){
+			//this one also covers elipse... may need to check for this one specifically again
+			return true;			
+		}else if(str.charAt(x)==('?')){
+			return true;
+		}else if(str.charAt(x)==(':')){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	*Sets the punctuation mark in the given word to be its own item in the array
+	*@param line the String[] that represents the line
+	*@param word the word in the line that contains the punctuation mark
+	*@return String[] 
+	*/
+	private String[] sepPunc(String[] line, int word){
+		String[] temp = new String[line.length+1];
+		if(line[word].contains("...")){
+			//Special case because this could be 3 or 1 punctuation mark
+			Boolean mark=false;
+			for(int i=0;i<temp.length;i++){//for each word in the line
+				if(i==word){//I care about this spot
+					temp[i]=line[i].substring(0,line[i].length()-3); //the main word
+					temp[i+1]=line[i].substring(line[i].length()-3); //the punctuation mark
+					i++;
+					mark=true;
+				}else{//not the place I care about
+					if(mark){
+						temp[i]=line[i-1];
+					}else{
+						temp[i]=line[i];
+					}
+				}
+			}
+		}else{
+			Boolean mark=false;
+			for(int i=0;i<temp.length;i++){//for each word in the line
+				if(i==word){//I care about this spot
+					temp[i]=line[i].substring(0,line[i].length()-1); //the main word
+					temp[i+1]=line[i].substring(line[i].length()-1); //the punctuation mark
+					i++;
+					mark=true;
+				}else{//not the place I care about
+					if(mark){
+						temp[i]=line[i-1];
+					}else{
+						temp[i]=line[i];
+					}
+				}
+			}
+		}
+		
+		return temp;//placeholder
 	}
 	
 	
