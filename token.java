@@ -3,16 +3,6 @@
 *@author Brandon Ehrmanntraut
 */
 
-/*
-TODO
-
-Handle punctuation
-
-
-
-
-
-*/
 import java.util.*;
 import java.io.*;
 public class token{
@@ -25,10 +15,10 @@ public class token{
 		run();
 	}
 	
-	ArrayList<String> lines = new ArrayList<String>();
-	HashMap<String,String> keys = new HashMap<String,String>();//find the keywords
-	HashMap<String,String> symbolTable = new HashMap<String,String>();//String[] is the token the item is being stored as and the time in which it appeared ie 
-	int MAX = 5;//the longest set of words that make up one reserved phrase
+	private ArrayList<String> lines = new ArrayList<String>();
+	private HashMap<String,String> keys = new HashMap<String,String>();//find the keywords
+	private HashMap<String,String> symbolTable = new HashMap<String,String>();
+	private ArrayList<String> tokens = new ArrayList<String>();
 	/**
 	*Class constructor
 	*@param FIM the file that is to be read
@@ -87,52 +77,18 @@ public class token{
 	*/
 	public String[] run(){
 		ArrayList<String[]> line = splits();
-		ArrayList<String> tokens = new ArrayList<String>();
+		
 		Boolean varComing = false;
 		int varS=0;//Begin of a variable
 		int varE=0;//End of a variable
 		for(int l=0;l<line.size();l++){//for each line
-			for(int i=0;i<line.get(l).length;i++){//for each word in the line
-				//in an ideal world I would use regex here to find the patterns of words, but I do not know how to implement regex in java so we use more for loops
-				
-				//need to work  from MAX size down 
-				for(int s=MAX-1;s>=0;s--){//for each valid length
-					if(s+i>line.get(l).length){//looking for a phrase that is longer than the remaining number of words
-						continue;
-					}else{
-						String keyWord = build(line.get(l),s,i);
-						if(varComing && (i==line.get(l).length-1)){//variable ended the new line
-							tokens.add("userVar");
-							keys.put(build(line.get(l),varS,line.size()-1),"userVar");
-							symbolTable.put(build(line.get(l),varS,line.size()-1),tokens.get(tokens.size()-2));
-							varComing=false;
-						}
-						if(keys.containsKey(keyWord)){
-							
-							if(varComing){
-								//We have the next keyword so we have the end of the var defined by the user
-								varE=i;
-								tokens.add("userVar");
-								keys.put(build(line.get(l),varS,varE-1),"userVar");
-								symbolTable.put(build(line.get(l),varS,varE-1),tokens.get(tokens.size()-2));
-								varComing=false;
-							}
-							i+=s;//used s extra letters, so need to move ahead s extra spaces
-							tokens.add(keys.get(keyWord));
-							if(specialKeyword(keys.get(keyWord))){
-								//the begining of the var is after this keyword ended
-								varS=i;
-								varComing=true;
-							}
-						}
-					}
-				}
-			}
+			doLine(line.get(l));
 			tokens.add("N");
 		}
 		tokens.remove(tokens.size()-1);//remove the last newline as the file ends
 		System.out.println(tokens);
-		System.out.println(keys);
+		//System.out.println(keys);
+		//System.out.println(symbolTable);
 		return null;
 		
 		
@@ -147,6 +103,30 @@ public class token{
 		for(int i=0;i<lines.size();i++){
 			temp.add(lines.get(i).split(" "));
 		}
+		//seperate out punctuation items
+		for(int i=0;i<temp.size();i++){//go through each line
+			Boolean seen = false;
+			String[] edited = new String[0];
+			int cont=0;
+			for(int j=0;j<temp.get(i).length;j++){//check if each word has punctuation at the end of it
+				if(seen && containsPunc(temp.get(i)[j])){
+					edited = sepPunc(edited,j+cont);
+					cont++;
+				}else if(containsPunc(temp.get(i)[j])){
+					edited = sepPunc(temp.get(i),j);
+					seen=true;
+					cont++;
+				}
+			}
+			if(edited.length>0){
+				temp.set(i,edited);
+			}
+		}
+		
+		
+		
+		
+		
 		return temp;
 	}
 	
@@ -159,8 +139,8 @@ public class token{
 	*/
 	private String build(String[] line, int s, int i){
 		String temp = "";
-		for(int j=0;j<s;j++){
-			temp = temp.concat(line[j+i]);
+		for(int j=0;j<i;j++){
+			temp = temp.concat(line[j+s]);
 		}
 		return temp;
 	}
@@ -171,11 +151,7 @@ public class token{
 	*@return Boolean true if a user defined name is incoming
 	*/
 	private Boolean specialKeyword(String keyWord){
-		if(keyWord=="beginfile"){
-			return true;
-		}else if(keyWord=="endfile"){
-			return true;
-		}else if(keyWord=="interface listing"){
+		if(keyWord=="interface listing"){
 			return true;
 		}else if(keyWord=="import"){
 			return true;
@@ -184,5 +160,253 @@ public class token{
 		return false;
 	}
 	
+	/**
+	*Tests for if a buffer will be needed before looking for the variable
+	*@param keyWord the keyword to check
+	*@return true if it is one of the pre-selected keywords needed to look for
+	*/
+	private Boolean isOtherSpecialKeyword(String keyWord){
+		if(keyWord=="beginfile"){
+			return true;
+		}else if(keyWord=="endfile"){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	*Checks if a given string has a punctuation at the end of it
+	*@param str the string to check
+	*@return true if there is a punction at the end of the string provided
+	*/
+	private Boolean containsPunc(String str){
+		int x = str.length()-1;
+		if(str.charAt(x)==(',')){
+			return true;
+		}else if(str.charAt(x)==('!')){
+			return true;
+		}else if(str.charAt(x)==('.')){
+			//this one also covers elipse... may need to check for this one specifically again
+			return true;			
+		}else if(str.charAt(x)==('?')){
+			return true;
+		}else if(str.charAt(x)==(':')){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	*Sets the punctuation mark in the given word to be its own item in the array
+	*@param line the String[] that represents the line
+	*@param word the word in the line that contains the punctuation mark
+	*@return String[] 
+	*/
+	private String[] sepPunc(String[] line, int word){
+		String[] temp = new String[line.length+1];
+		if(line[word].contains("...")){
+			//Special case because this could be 3 or 1 punctuation mark
+			Boolean mark=false;
+			for(int i=0;i<temp.length;i++){//for each word in the line
+				if(i==word){//I care about this spot
+					temp[i]=line[i].substring(0,line[i].length()-3); //the main word
+					temp[i+1]=line[i].substring(line[i].length()-3); //the punctuation mark
+					i++;
+					mark=true;
+				}else{//not the place I care about
+					if(mark){
+						temp[i]=line[i-1];
+					}else{
+						temp[i]=line[i];
+					}
+				}
+			}
+		}else{
+			Boolean mark=false;
+			for(int i=0;i<temp.length;i++){//for each word in the line
+				if(i==word){//I care about this spot
+					temp[i]=line[i].substring(0,line[i].length()-1); //the main word
+					temp[i+1]=line[i].substring(line[i].length()-1); //the punctuation mark
+					i++;
+					mark=true;
+				}else{//not the place I care about
+					if(mark){
+						temp[i]=line[i-1];
+					}else{
+						temp[i]=line[i];
+					}
+				}
+			}
+		}
+		
+		return temp;//placeholder
+	}
+	
+	/**
+	*Tests if a given string is a keyword
+	*@param key the keyword to look for
+	*@return true if the given String is a valid keyword
+	*/
+	private Boolean isKeyword(String key){
+		if(keys.containsKey(key)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	*A breakdown of run that tokenizes a single line - void as all needed things to write to are already global variables
+	*@param line, the String[] that makes up the line
+	*/
+	private void doLine(String[] line){
+		ArrayList<String> thisLinesTokens = new ArrayList<String>();
+		ArrayList<Integer> varLoc = new ArrayList<Integer>();
+		ArrayList<Integer> varEnd = new ArrayList<Integer>();
+		ArrayList<Integer> tokenPos = new ArrayList<Integer>();
+		Boolean lookForEnd=false;
+		Boolean specialCase=false;
+		for(int start=0;start<line.length;start++){//each start word
+			for(int len=line.length;len>=0;len--){//each length
+				if(start+len>line.length){
+					continue;
+				}
+				String cur = build(line,start,len);
+				if(isKeyword(cur)){
+					thisLinesTokens.add(keys.get(cur));
+					if(lookForEnd){
+						if(specialCase){
+							varEnd.add(start+2);
+							specialCase=false;
+						}else{
+							varEnd.add(start-1);
+						}
+						lookForEnd=false;
+					}
+					start+=len-1;
+					if(specialKeyword(keys.get(cur))){//next position starts a user defined name
+						varLoc.add(start+1);
+						lookForEnd=true;
+						tokenPos.add(thisLinesTokens.size());
+					}else if(isOtherSpecialKeyword(keys.get(cur))){//the position after the next position starts a user defined name
+						varLoc.add(start+2);
+						lookForEnd=true;
+						specialCase=true;
+						tokenPos.add(thisLinesTokens.size()+1);
+					}
+				}
+			}
+		}
+		if(!varLoc.isEmpty()){
+			if(varLoc.size()!=varEnd.size()){
+				varEnd.add(varLoc.get(varLoc.size()-1));
+			}
+			ArrayList<String> allVars = getVars(varLoc,varEnd,line);
+			ArrayList<String> types = findTypes(tokenPos,thisLinesTokens);
+			thisLinesTokens = mergeTokens(thisLinesTokens,types,tokenPos);
+		}
+		//need to still add in all already defined names into the symbol table and the keyword hashmap
+		//symbol table should become an ArrayList, 
+		tokens.addAll(thisLinesTokens);
+		
+	}
+	
+	/**
+	*Builds a given user defined name
+	*@param start the first position in the variable name
+	*@param end the end position in the variable name
+	*@param line the String[] that the names will be built from
+	*@return String the full name
+	*/
+	private String buildVar(int start, int end, String[] line){
+		String composite = "";
+		for(int i=start;i<=end;i++){
+			composite = composite.concat(line[i]);
+		}
+		return composite;
+	}
+	
+	/**
+	*Finds and builds the user defined variable name
+	*@param start the begining positions for the variable names
+	*@param end the ending position for the variable names
+	*@param line the line in which the variables exist on
+	*/
+	private ArrayList<String> getVars(ArrayList<Integer> start, ArrayList<Integer> end, String[] line){
+		ArrayList<String> allVars = new ArrayList<String>();
+		for(int i=0;i<start.size();i++){
+			allVars.add(buildVar(start.get(i),end.get(i),line));
+		}
+		return allVars;
+	}
+	
+	/**
+	*Finds the type for all of the variables in the given line
+	*@param positions the positions of all of the user variables
+	*@param tokens the current list of generated tokens
+	*@return ArrayList<String> a list of all of the token types, in the same order as was dictated by the positions array
+	*/
+	private ArrayList<String> findTypes(ArrayList<Integer> positions,ArrayList<String> tokens){
+		//take each position and look at the previous token type, if punc then look back one more time
+		ArrayList<String> types = new ArrayList<String>();
+		for(int i=0;i<positions.size();i++){
+			int lookAt=0;
+			if(tokens.get(positions.get(i)-1)=="punc"){
+				lookAt=positions.get(i)-2;
+			}else{
+				lookAt=positions.get(i)-1;
+			}
+			//All of the codes translated
+			if(tokens.get(lookAt)=="beginfile"){
+				types.add("className");
+			}else if(tokens.get(lookAt)=="interface listing"){
+				types.add("interfaceName");
+			}else if(tokens.get(lookAt)=="endfile"){
+				types.add("Signee");
+			}else{
+				System.out.println("If you are seeing this, then the findTypes private method was unable to find the type to a declared variable, you should not be seeing this...");
+			}
+		}
+		return types;
+	}
+	
+	/**
+	*Merges the tokens with the user defined values to create the full token list for the line
+	*@param preDefined the already established tokens list
+	*@param userDefined the collection of user made variable names
+	*@param positions the positions in the token list where the variable is located
+	*@return ArrayList<String> the merged token list
+	*/
+	private ArrayList<String> mergeTokens(ArrayList<String> preDefined, ArrayList<String> userDefined, ArrayList<Integer> positions){
+		for(int i=positions.size()-1;i>=0;i--){
+			preDefined.add(positions.get(i),userDefined.get(i));
+		}
+		return preDefined;
+	}
+	
 	
 }
+
+//the spaces down here are to lift all the actual code up higher on the screen in my IDE (Notepad++), if this comment is still here I do apologize, as it has no actual value to the code itself.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
