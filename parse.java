@@ -7,7 +7,16 @@ import java.util.*;
 import java.io.*;
 public class parse{
 	public static void main(String args[]){
+		//Test stuffs
 		
+		parse tester = new parse(new String[]{"beginfile","class","punc","report","punc", "n"});
+		ArrayList<String> pass = new ArrayList<String>(Arrays.asList(input));
+		compute();
+		if(comp.get(pass)==null){
+			System.out.println("False");
+		}else{
+			System.out.println("True");
+		}
 	}
 	
 	
@@ -33,7 +42,9 @@ public class parse{
 	static ArrayList<String> keys = new ArrayList<String>();
 	static HashMap<ArrayList<String>, HashSet<String>> comp = new HashMap<ArrayList<String>, HashSet<String>>();
 	public parse(String Input[]){
+		//TODO build the grammar loader directly into this file
 		input=Input;
+		build();
 	}
 	
 	/**
@@ -49,8 +60,10 @@ public class parse{
 			   String lhs = sep[0];
 			   int len = sep.length;
 			   if(len<4){//only one terminal
+					rhs = new String[1][];
 				   rhs[0] = new String[]{sep[2]};
 			   }else if(len<5){//only one set of things
+				   rhs = new String[1][];
 				   rhs[0] = new String[]{sep[2],sep[3]};
 			   }else if(len<7){//a set of two and then a set of one
 				   rhs[0] = new String[]{sep[2],sep[3]};
@@ -70,6 +83,7 @@ public class parse{
 	
 	public static void compute(){
 		firstLayer();
+		
 		for(int l=1;l<input.length;l++){//length
 			//System.out.println(l + "/" + input.length);
 			for(int s=0;s<input.length-l;s++){//start
@@ -91,7 +105,6 @@ public class parse{
 						HashSet<String> found = finder(allProd);
 						if(found.isEmpty()){
 							if(!comp.containsKey(span)){
-								
 								comp.put(span,null);
 							}
 						}else{
@@ -113,7 +126,7 @@ public class parse{
 								comp.put(span,cur);
 							}
 						}
-					}
+					}	
 				}
 			}
 		}
@@ -141,6 +154,7 @@ public class parse{
 						comp.put(temp2,temp3);
 					}
 				}
+				
 			}
 		}
 	}
@@ -174,11 +188,14 @@ public class parse{
 					z++;
 				}
 			}
+			
 			return prods;
 			
 		}catch(NullPointerException E){
 			return new String[0][0];//happens if one of the previous cells was a null
 		}
+		
+		
 	}
 	
 	/**
@@ -210,4 +227,8 @@ public class parse{
 			return true;
 		}
 	}
+	
+	
+	
+	
 }
