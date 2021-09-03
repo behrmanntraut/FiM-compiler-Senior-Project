@@ -1,0 +1,15 @@
+Opening : Begin extendEnd | extendBegin extendEnd
+Begin : Beginfile Class
+Beginfile : beginfile
+Class : class
+extendEnd : PR endLine
+PR : Punc Report
+Punc : punc
+Report : report
+endLine : Punc N
+N : n
+extendBegin : Begin Interfaces
+interfaces : Interfacelisting Interface
+Interfacelisting : interfacelisting
+Interface : interface
+S : Opening Mainstay
