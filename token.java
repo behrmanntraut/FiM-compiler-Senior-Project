@@ -10,14 +10,10 @@ public class token{
 		
 	}
 	
-	//Basically the main function but my driver is in another class
-	public void testRun(){
-		run();
-	}
 	
 	private ArrayList<String> lines = new ArrayList<String>();
 	private HashMap<String,String> keys = new HashMap<String,String>();//find the keywords
-	private HashMap<String,String> symbolTable = new HashMap<String,String>();
+	private ArrayList<String> symbolTable = new ArrayList<String>();
 	private ArrayList<String> tokens = new ArrayList<String>();
 	/**
 	*Class constructor
@@ -26,6 +22,14 @@ public class token{
 	public token(String FIM){
 		lines = read(FIM);
 		buildKeywords();
+	}
+	
+	/**
+	*Returns the symbol table
+	*@return ArrayList<String> the symbol table
+	*/
+	public ArrayList<String> getSymbolTable(){
+		return symbolTable;
 	}
 	
 	/**
@@ -54,7 +58,7 @@ public class token{
 		//Report related keywords
 		keys.put("Dear", "beginfile");
 		keys.put("Yourfaithfulstudent", "endfile");
-		keys.put("and", "interface listing"); 
+		keys.put("and", "interfacelisting"); 
 		keys.put("RememberwhenIwroteabout", "import");
 		//punctuation
 		keys.put("!","punc");
@@ -79,19 +83,103 @@ public class token{
 		ArrayList<String[]> line = splits();
 		
 		Boolean varComing = false;
-		int varS=0;//Begin of a variable
-		int varE=0;//End of a variable
-		for(int l=0;l<line.size();l++){//for each line
+		//going to do the first line in its own function because it is weird
+		
+		firstLine(line.get(0));
+		tokens.add("n");
+		for(int l=1;l<line.size();l++){//for each line
 			doLine(line.get(l));
-			tokens.add("N");
+			tokens.add("n");
 		}
 		tokens.remove(tokens.size()-1);//remove the last newline as the file ends
-		System.out.println(tokens);
-		//System.out.println(keys);
-		//System.out.println(symbolTable);
-		return null;
+		
+		return tokens.toArray(new String[tokens.size()]);
 		
 		
+	}
+	
+	/**
+	*Builds the first line of tokens, done seperately because this line is weird
+	*@param line the line itself
+	*/
+	private void firstLine(String[] line){
+		//the big question is if there is an interface listed or not
+		ArrayList<String> lines = new ArrayList<String>(Arrays.asList(line));
+		ArrayList<Integer> varLoc = new ArrayList<Integer>();
+		ArrayList<Integer> varEnd = new ArrayList<Integer>();
+		ArrayList<Integer> varPos = new ArrayList<Integer>();
+		ArrayList<String> thisLineTokens = new ArrayList<String>();
+		Boolean first=true;
+		if(lines.contains("and")){
+			//variables start at 1, after and, and after the first punc
+			for(int i=0;i<lines.size();i++){
+				if(isKeyword(lines.get(i))){
+					thisLineTokens.add(keys.get(lines.get(i)));
+					
+					if(lines.get(i).equals("Dear")){
+						varLoc.add(i+1);
+						varPos.add(thisLineTokens.size());
+					}else if(lines.get(i).equals("and")){
+						varLoc.add(i+1);
+						varEnd.add(i-1);
+						varPos.add(thisLineTokens.size());
+					}else if(first && containsPunc(lines.get(i))){
+						varLoc.add(i+1);
+						varEnd.add(i-1);
+						varPos.add(thisLineTokens.size());
+						first=false;
+					}else if(containsPunc(lines.get(i))){
+						varEnd.add(i-1);
+					}
+				}
+			}
+			if(!varLoc.isEmpty()){
+				if(varLoc.size()!=varEnd.size()){
+					varEnd.add(varLoc.get(varLoc.size()-1));
+				}
+				ArrayList<String> allVars = getVars(varLoc,varEnd,line);
+				ArrayList<String> types = new ArrayList<String>(Arrays.asList("class","interface","report"));
+				keys.put(allVars.get(0),"class");
+				keys.put(allVars.get(1),"interface");
+				keys.put(allVars.get(2),"report");
+				symbolTable.add(allVars.get(0));
+				symbolTable.add(allVars.get(1));
+				symbolTable.add(allVars.get(2));
+				thisLineTokens = mergeTokens(thisLineTokens,types,varPos);
+			}
+		}else{
+			//variables at 1 and after the first punc
+			for(int i=0;i<lines.size();i++){
+				if(isKeyword(lines.get(i))){
+					thisLineTokens.add(keys.get(lines.get(i)));
+					
+					if(lines.get(i).equals("Dear")){
+						varLoc.add(i+1);
+						varPos.add(thisLineTokens.size());
+					}else if(first && containsPunc(lines.get(i))){
+						varLoc.add(i+1);
+						varEnd.add(i-1);
+						varPos.add(thisLineTokens.size());
+						first=false;
+					}else if(containsPunc(lines.get(i))){
+						varEnd.add(i-1);
+					}
+				}
+			}
+			if(!varLoc.isEmpty()){
+				if(varLoc.size()!=varEnd.size()){
+					varEnd.add(varLoc.get(varLoc.size()-1));
+				}
+				ArrayList<String> allVars = getVars(varLoc,varEnd,line);
+				ArrayList<String> types = new ArrayList<String>(Arrays.asList("class","report"));
+				keys.put(allVars.get(0),"class");
+				keys.put(allVars.get(1),"report");
+				symbolTable.add(allVars.get(0));
+				symbolTable.add(allVars.get(1));
+				thisLineTokens = mergeTokens(thisLineTokens,types,varPos);
+			}
+		}
+		tokens.addAll(thisLineTokens);
 	}
 	
 	/**
@@ -108,6 +196,9 @@ public class token{
 			Boolean seen = false;
 			String[] edited = new String[0];
 			int cont=0;
+			if(temp.get(i).length==1){
+				continue;//empty line
+			}
 			for(int j=0;j<temp.get(i).length;j++){//check if each word has punctuation at the end of it
 				if(seen && containsPunc(temp.get(i)[j])){
 					edited = sepPunc(edited,j+cont);
@@ -122,11 +213,6 @@ public class token{
 				temp.set(i,edited);
 			}
 		}
-		
-		
-		
-		
-		
 		return temp;
 	}
 	
@@ -151,7 +237,9 @@ public class token{
 	*@return Boolean true if a user defined name is incoming
 	*/
 	private Boolean specialKeyword(String keyWord){
-		if(keyWord=="interface listing"){
+		if(keyWord=="beginfile"){
+			return true;
+		}else if(keyWord=="interface listing"){
 			return true;
 		}else if(keyWord=="import"){
 			return true;
@@ -166,9 +254,20 @@ public class token{
 	*@return true if it is one of the pre-selected keywords needed to look for
 	*/
 	private Boolean isOtherSpecialKeyword(String keyWord){
-		if(keyWord=="beginfile"){
+		if(keyWord=="endfile"){
 			return true;
-		}else if(keyWord=="endfile"){
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	*At the begining of the file we have some shenanigans with the report name at the end of the line, but it is being defined by Dear at the begining so this is here to handle that one single case
+	*@param keyWord the String representing the keyword
+	*@return Boolean true if the keyword is beginfile
+	*/
+	private Boolean isSuperSpecialKeyword(String keyWord){
+		if(keyWord=="beginfile"){
 			return true;
 		}else{
 			return false;
@@ -278,12 +377,12 @@ public class token{
 					thisLinesTokens.add(keys.get(cur));
 					if(lookForEnd){
 						if(specialCase){
-							varEnd.add(start+2);
 							specialCase=false;
 						}else{
 							varEnd.add(start-1);
+							lookForEnd=false;
 						}
-						lookForEnd=false;
+						
 					}
 					start+=len-1;
 					if(specialKeyword(keys.get(cur))){//next position starts a user defined name
@@ -304,6 +403,7 @@ public class token{
 				varEnd.add(varLoc.get(varLoc.size()-1));
 			}
 			ArrayList<String> allVars = getVars(varLoc,varEnd,line);
+			symbolTable.addAll(allVars);
 			ArrayList<String> types = findTypes(tokenPos,thisLinesTokens);
 			thisLinesTokens = mergeTokens(thisLinesTokens,types,tokenPos);
 		}
@@ -360,11 +460,17 @@ public class token{
 			}
 			//All of the codes translated
 			if(tokens.get(lookAt)=="beginfile"){
-				types.add("className");
+				types.add("class");
+				keys.put(tokens.get(lookAt),"class");
 			}else if(tokens.get(lookAt)=="interface listing"){
 				types.add("interfaceName");
+				keys.put(tokens.get(lookAt),"interfaceName");
 			}else if(tokens.get(lookAt)=="endfile"){
-				types.add("Signee");
+				types.add("signee");
+				keys.put(tokens.get(lookAt),"author");
+			}else if(tokens.get(lookAt)=="import"){
+				types.add("iName");
+				keys.put(tokens.get(lookAt),"iName");
 			}else{
 				System.out.println("If you are seeing this, then the findTypes private method was unable to find the type to a declared variable, you should not be seeing this...");
 			}
@@ -390,12 +496,6 @@ public class token{
 }
 
 //the spaces down here are to lift all the actual code up higher on the screen in my IDE (Notepad++), if this comment is still here I do apologize, as it has no actual value to the code itself.
-
-
-
-
-
-
 
 
 
