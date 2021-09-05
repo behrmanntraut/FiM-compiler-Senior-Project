@@ -9,12 +9,22 @@ public class parse{
 	public static void main(String args[]){
 		//Test stuffs
 		
-		parse tester = new parse(new String[]{"beginfile","class","punc","report","punc", "n"});
+		parse tester = new parse(new String[]{"beginfile","class","punc","report","punc", "n", "import", "iName", "punc", "n", "n", "n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n", "endfile", "punc", "signee", "punc"});
 		ArrayList<String> pass = new ArrayList<String>(Arrays.asList(input));
+		
+		
 		compute();
+		/*
+		ArrayList keyss = new ArrayList(comp.keySet());
+		for(int i=0;i<keyss.size();i++){
+			if(comp.get(keyss.get(i))!= null){
+				System.out.println(comp.get(keyss.get(i)) + "\t\t" + keyss.get(i));
+			}
+		}
+		*/
 		if(comp.get(pass)==null){
 			System.out.println("False");
-		}else{
+		}else{	
 			System.out.println("True");
 		}
 	}
@@ -55,29 +65,53 @@ public class parse{
 			String line;
 			while ((line = br.readLine()) != null) {
 			   String[] sep = line.split(" ");
-			   int state=0;
-			   String[][] rhs = new String[2][];
+			   for(int i=0;i<sep.length;i++){
+				   sep[i] = sep[i].trim();
+			   }
 			   String lhs = sep[0];
 			   int len = sep.length;
-			   if(len<4){//only one terminal
-					rhs = new String[1][];
-				   rhs[0] = new String[]{sep[2]};
-			   }else if(len<5){//only one set of things
-				   rhs = new String[1][];
-				   rhs[0] = new String[]{sep[2],sep[3]};
-			   }else if(len<7){//a set of two and then a set of one
-				   rhs[0] = new String[]{sep[2],sep[3]};
-				   rhs[1] = new String[]{sep[5]};
-			   }else{//two sets of two
-				   rhs[0] = new String[]{sep[2],sep[3]};
-				   rhs[1] = new String[]{sep[5],sep[6]};
+			   if(lhs.equals("//")){
+				   continue;//I am using this to put comments in the grammar file
 			   }
+			   //Build an arraylist of all the rules
+			   ArrayList<ArrayList<String>> Rhs = new ArrayList<ArrayList<String>>();
+			   int slot=0;
+			   for(int i=2;i<sep.length;i++){
+				   if(sep[i].charAt(0)=='|'){
+					   slot++;
+					   continue;
+				   }
+				   if(Rhs.size()<=slot){
+					   Rhs.add(new ArrayList<String>());
+				   }
+				   ArrayList<String> temp = Rhs.get(slot);
+				   temp.add(sep[i]);
+				   Rhs.set(slot,temp);
+			   }
+			   
+			   String[][] rhs = new String[Rhs.size()][];
+			   for(int i=0;i<Rhs.size();i++){
+				   String[] tempStr = new String[Rhs.get(i).size()];
+				   for(int j=0;j<tempStr.length;j++){
+					   tempStr[j]=Rhs.get(i).get(j);
+				   }
+				   rhs[i]=tempStr;
+			   }
+			   
+			   /*
+			   for(int i=0;i<rhs.length;i++){
+				   for(int j=0;j<rhs[i].length;j++){
+					   System.out.print(rhs[i][j] + " ");
+				   }
+				   System.out.println("Line");
+			   }
+			   */
 			   G.put(lhs,rhs);
+			   
 			}
 		}catch(Exception E){
 			
 		}
-		
 		keys = new ArrayList<String>(G.keySet());
 	}
 	
@@ -142,16 +176,21 @@ public class parse{
 				//look at the individual word and put up all non-terminals that point to it
 			for(int j=0;j<keys.size();j++){
 				String[][] temp = G.get(keys.get(j));
+				//System.out.println(j);
 				for(int k=0;k<temp.length;k++){
-					if(temp[k].length==1 && temp[k][0].equals(input[i])){
-						ArrayList<String> temp2 = new ArrayList<String>();
-						temp2.add(temp[k][0]);
-						HashSet<String> temp3 = new HashSet<String>();
-						if(comp.containsKey(temp2)){
-							temp3 = comp.get(temp2);
+					if(temp[k].length==1){
+						//System.out.println("Hit");
+						if(temp[k][0].equals(input[i])){
+							//System.out.println("Hit2");
+							ArrayList<String> temp2 = new ArrayList<String>();
+							temp2.add(temp[k][0]);
+							HashSet<String> temp3 = new HashSet<String>();
+							if(comp.containsKey(temp2)){
+								temp3 = comp.get(temp2);
+							}
+							temp3.add(keys.get(j));
+							comp.put(temp2,temp3);
 						}
-						temp3.add(keys.get(j));
-						comp.put(temp2,temp3);
 					}
 				}
 				
@@ -216,13 +255,31 @@ public class parse{
 	}
 	
 	private static boolean compare(String[] prods, String[] rule){
+		/*
+		if(prods[0].equals("Begin")){
+			for(int i=0;i<prods.length;i++){
+				System.out.print(prods[i] + " ");
+			}
+			System.out.print("\t");
+			for(int j=0;j<rule.length;j++){
+				System.out.print(rule[j] + " ");
+			}
+			System.out.println();
+		}
+		*/
 		if(prods.length != rule.length){
 			return false;
 		}else{
 			for(int i=0;i<prods.length;i++){
 				if(!prods[i].equals(rule[i])){
+					if(prods[0].equals("Begin")){
+						//System.out.println("Here");
+					}
 					return false;
 				}
+			}
+			if(prods[0].equals("Begin")){
+				//System.out.println("Sending true");
 			}
 			return true;
 		}
