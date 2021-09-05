@@ -1,15 +1,34 @@
-Opening : Begin extendEnd | extendBegin extendEnd
+// Main branch
+// q is a special terminal symbol that helps make this work, signaling that the file (or loop?) 
+S : Opening A
+A : F Closing
+F : N F | Imports F | endfile
+//
+// opening the file
+//
+Opening : Begin PRP | ExtendBegin PRP
 Begin : Beginfile Class
 Beginfile : beginfile
 Class : class
-extendEnd : PR endLine
+PRP : PR Punc
 PR : Punc Report
 Punc : punc
 Report : report
-endLine : Punc N
 N : n
-extendBegin : Begin Interfaces
-interfaces : Interfacelisting Interface
+ExtendBegin : Begin Interfaces
+Interfaces : Interfacelisting Interface
 Interfacelisting : interfacelisting
 Interface : interface
-S : Opening Mainstay
+//
+// Imports
+//
+Imports : Bimport Punc
+Bimport : Import Iname
+Import : import
+Iname : iName
+//
+// Closing
+//
+Closing : Punc FinalEnd
+FinalEnd : Signee Punc
+Signee : signee
