@@ -1,5 +1,4 @@
 // Main branch
-// q is a special terminal symbol that helps make this work, signaling that the file (or loop?) 
 S : Opening A
 A : F Closing
 F : N F | Imports F | endfile
