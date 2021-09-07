@@ -68,8 +68,12 @@ public class token{
 		keys.put("?","punc");
 		keys.put("...","punc");
 		keys.put("‽","punc");
-		
-		
+		keys.put("TodayIlearned","mane");
+		keys.put("That'sallabout","endMainfunc");
+		keys.put("Iremembered","print");
+		keys.put("Isaid","print");
+		keys.put("Isang","print");
+		keys.put("Iwrote","print");
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
 	}
@@ -242,6 +246,10 @@ public class token{
 		}else if(keyWord=="interface listing"){
 			return true;
 		}else if(keyWord=="import"){
+			return true;
+		}else if(keyWord=="mane"){
+			return true;
+		}else if(keyWord=="print"){
 			return true;
 		}
 		//no user defined names incoming. very nice
@@ -471,8 +479,15 @@ public class token{
 			}else if(tokens.get(lookAt)=="import"){
 				types.add("iName");
 				keys.put(tokens.get(lookAt),"iName");
+			}else if(tokens.get(lookAt)=="mane"){
+				types.add("manemethod");
+				keys.put(tokens.get(lookAt),"manemethod");
+			}else if(tokens.get(lookAt)=="print"){
+				types.add("tempStr");
+				keys.put(tokens.get(lookAt),"tempStr");
 			}else{
 				System.out.println("If you are seeing this, then the findTypes private method was unable to find the type to a declared variable, you should not be seeing this...");
+				
 			}
 		}
 		return types;
