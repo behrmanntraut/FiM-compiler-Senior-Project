@@ -8,7 +8,7 @@ public class generator{
 	public static void main(String[] args){
 		
 	}
-	
+	private int tabCount=0;
 	private ArrayList<String> tokens = new ArrayList<String>();
 	private ArrayList<String> symbols = new ArrayList<String>();
 	private String master = new String();
@@ -31,7 +31,8 @@ public class generator{
 	*/
 	public void run(){
 		while(loc<tokens.size()){ //builds a string that is the file
-			master = master.concat(navigate(tokens.get(loc)));
+			String newThing = navigate(tokens.get(loc));
+			master = master.concat(newThing);
 		}
 		String fileName = ReportName.concat(".java");
 		try{
@@ -43,6 +44,7 @@ public class generator{
 			}
 			try{
 				FileWriter writer = new FileWriter(fileName);
+				System.out.println(master);
 				writer.write(master);
 				writer.close();
 			}catch(Exception e){
@@ -69,10 +71,28 @@ public class generator{
 			return end();
 		}else if(cur.equals("n")){
 			return n();
+		}else if(cur.equals("mane")){
+			return Main();
+		}else if(cur.equals("endMainfunc")){
+			return MainEnd();
+		}else if(cur.equals("print")){
+			return Print();
 		}
 		
 		System.out.println("The code generator did not know what to do when it encountered the token: " + cur);
 		return "";
+	}
+	
+	/**
+	*Returns a String with the current number of tabs in it
+	*@return String a bunch of tabs
+	*/
+	private String tabs(){
+		String temp="";
+		for(int i=0;i<tabCount;i++){
+			temp=temp.concat("\t");
+		}
+		return temp;
 	}
 	
 	/**
@@ -101,20 +121,22 @@ public class generator{
 			builder = builder.concat("{");
 			loc += 5;
 		}
+		tabCount++;
 		return builder;
 	}
 	
 	/**
-	*Handles the import calls
+	*Handles the import calls *Directly changes master String*
 	*@return String the java code for this line, expressed as a string
 	*/
 	private String Import(){
 		String builder = "import ";
 		builder = builder.concat(symbols.get(varCount));
-		builder = builder.concat(";");
+		builder = builder.concat(";\n");
+		master = builder.concat(master);
 		varCount++;
-		loc += 3;
-		return builder;
+		loc += 4;
+		return "";
 	}
 	
 	/**
@@ -135,13 +157,59 @@ public class generator{
 	// need to make sure to add } at the end of the file
 		String auth = "/**\n*@author ";
 		auth = auth.concat(symbols.get(symbols.size()-1));
-		auth = auth.concat("\n*/");
+		auth = auth.concat("\n*/\n");
 		master = auth.concat(master);
 		loc = tokens.size();//catch to ensure that the prgoram does not loop forever
-		return "}";
+		return close();
 	}
 	
+	/**
+	*Closes off things, aka }
+	*@return String the closing symbol
+	*/
+	private String close(){
+	return "}";
+	}
 	
+	/**
+	*Builds the mane paragraph
+	*@return String the line that builds the mane paragraph
+	*/
+	private String Main(){
+		String builder = tabs();
+		builder = builder.concat("public static void main(String[] args){");
+		loc+=3;
+		varCount++;
+		tabCount++;
+		return builder;
+	}
+	
+	/**
+	*Ends the mane paragraph
+	*@return String the end of the main paragraph
+	*/
+	private String MainEnd(){
+		tabCount--;
+		String builder = tabs();
+		builder = builder.concat(close());
+		varCount++;
+		loc+=3;
+		return builder;
+	}
+	
+	/**
+	*Thr print statement
+	*@return String the print statement
+	*/
+	private String Print(){
+		String builder = tabs();
+		builder = builder.concat("System.out.println(");
+		builder = builder.concat(symbols.get(varCount));
+		varCount++;
+		builder = builder.concat(");");
+		loc += 3;
+		return builder;
+	}
 	
 	
 }
