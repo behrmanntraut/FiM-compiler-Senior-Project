@@ -1,7 +1,11 @@
 // Main branch
+// @author Brandon Ehrmanntraut 
 S : Opening A
 A : F Closing
-F : N F | Imports F | endfile
+F : N F | Imports F | endfile | M F
+M : Manestart X
+X : Q ManeEnd
+Q : N Q | Fullprint Q | endMainfunc
 //
 // opening the file
 //
@@ -31,3 +35,18 @@ Iname : iName
 Closing : Punc FinalEnd
 FinalEnd : Signee Punc
 Signee : signee
+//
+// print statements - to be updated in milestone 3
+//
+Print : print
+Tempstr : tempStr
+ToPrint : Print Tempstr
+Fullprint : ToPrint Punc
+//
+// Mane Method
+// The spelling of mane this way is dictated in the FiM++ wiki, not my own interpretation
+Mane : mane
+ManeMethod : manemethod
+ManeDec : Mane ManeMethod
+Manestart : ManeDec Punc
+ManeEnd : ManeMethod Punc
