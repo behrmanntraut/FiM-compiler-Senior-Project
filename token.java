@@ -41,7 +41,9 @@ public class token{
 		ArrayList<String> holder = new ArrayList<String>();
 		try (BufferedReader br = new BufferedReader(new FileReader(FIM))) {
 			String line;
+			//System.out.println(line);
 			while ((line = br.readLine()) != null) {
+			   line = line.trim();
 			   holder.add(line);
 			}
 		}catch(Exception E){
@@ -68,12 +70,40 @@ public class token{
 		keys.put("?","punc");
 		keys.put("...","punc");
 		keys.put("‽","punc");
+		//mane method
 		keys.put("TodayIlearned","mane");
 		keys.put("That'sallabout","endMainfunc");
+		//print
 		keys.put("Iremembered","print");
 		keys.put("Isaid","print");
 		keys.put("Isang","print");
 		keys.put("Iwrote","print");
+		//variables
+		keys.put("Didyouknowthat","varDec");
+			//Boolean
+			keys.put("anargument","Bool");
+			keys.put("argument","Bool");
+			keys.put("theargument","Bool");
+			keys.put("logic","Bool");
+			keys.put("thelogic","Bool");
+				//true
+				keys.put("correct","true");
+				keys.put("right","true");
+				keys.put("true","true");
+				keys.put("yes","true");
+				//false
+				keys.put("false","false");
+				keys.put("incorrect","false");
+				keys.put("no","false");
+				keys.put("wrong","false");
+			//asign
+			keys.put("arenow","asign");
+			keys.put("become","asign");
+			keys.put("becomes","asign");
+			keys.put("isnow","asign");
+			keys.put("nowlike","asign");
+			keys.put("nowlikes","asign");
+		
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
 	}
@@ -96,7 +126,7 @@ public class token{
 			tokens.add("n");
 		}
 		tokens.remove(tokens.size()-1);//remove the last newline as the file ends
-		
+		System.out.println(keys);
 		return tokens.toArray(new String[tokens.size()]);
 		
 		
@@ -249,7 +279,9 @@ public class token{
 			return true;
 		}else if(keyWord=="mane"){
 			return true;
-		}else if(keyWord=="print"){
+		}else if(keyWord=="print"){//?
+			return true;
+		}else if(keyWord=="varDec"){
 			return true;
 		}
 		//no user defined names incoming. very nice
@@ -392,17 +424,18 @@ public class token{
 						}
 						
 					}
-					start+=len-1;
+					start+=len;
 					if(specialKeyword(keys.get(cur))){//next position starts a user defined name
-						varLoc.add(start+1);
+						varLoc.add(start);
 						lookForEnd=true;
 						tokenPos.add(thisLinesTokens.size());
 					}else if(isOtherSpecialKeyword(keys.get(cur))){//the position after the next position starts a user defined name
-						varLoc.add(start+2);
+						varLoc.add(start+1);
 						lookForEnd=true;
 						specialCase=true;
 						tokenPos.add(thisLinesTokens.size()+1);
 					}
+					start--;
 				}
 			}
 		}
@@ -412,7 +445,7 @@ public class token{
 			}
 			ArrayList<String> allVars = getVars(varLoc,varEnd,line);
 			symbolTable.addAll(allVars);
-			ArrayList<String> types = findTypes(tokenPos,thisLinesTokens);
+			ArrayList<String> types = findTypes(tokenPos,thisLinesTokens, allVars);
 			thisLinesTokens = mergeTokens(thisLinesTokens,types,tokenPos);
 		}
 		//need to still add in all already defined names into the symbol table and the keyword hashmap
@@ -454,10 +487,12 @@ public class token{
 	*Finds the type for all of the variables in the given line
 	*@param positions the positions of all of the user variables
 	*@param tokens the current list of generated tokens
+	*@param allVars all of the variables 
 	*@return ArrayList<String> a list of all of the token types, in the same order as was dictated by the positions array
 	*/
-	private ArrayList<String> findTypes(ArrayList<Integer> positions,ArrayList<String> tokens){
+	private ArrayList<String> findTypes(ArrayList<Integer> positions,ArrayList<String> tokens, ArrayList<String> allVars){
 		//take each position and look at the previous token type, if punc then look back one more time
+		int var=0;
 		ArrayList<String> types = new ArrayList<String>();
 		for(int i=0;i<positions.size();i++){
 			int lookAt=0;
@@ -469,26 +504,32 @@ public class token{
 			//All of the codes translated
 			if(tokens.get(lookAt)=="beginfile"){
 				types.add("class");
-				keys.put(tokens.get(lookAt),"class");
+				keys.put(allVars.get(var),"class");
 			}else if(tokens.get(lookAt)=="interface listing"){
 				types.add("interfaceName");
-				keys.put(tokens.get(lookAt),"interfaceName");
+				keys.put(allVars.get(var),"interfaceName");
 			}else if(tokens.get(lookAt)=="endfile"){
 				types.add("signee");
-				keys.put(tokens.get(lookAt),"author");
+				keys.put(allVars.get(var),"author");
 			}else if(tokens.get(lookAt)=="import"){
 				types.add("iName");
-				keys.put(tokens.get(lookAt),"iName");
+				keys.put(allVars.get(var),"iName");
 			}else if(tokens.get(lookAt)=="mane"){
 				types.add("manemethod");
-				keys.put(tokens.get(lookAt),"manemethod");
-			}else if(tokens.get(lookAt)=="print"){
+				keys.put(allVars.get(var),"manemethod");
+			}else if(tokens.get(lookAt)=="print"){				//?
 				types.add("tempStr");
-				keys.put(tokens.get(lookAt),"tempStr");
+				keys.put(allVars.get(var),"tempStr");
+			}else if(tokens.get(lookAt)=="varDec"){
+				String thisType = getBasicType(tokens,lookAt+1);
+				types.add(thisType);
+				keys.put(allVars.get(var),thisType);
+				
 			}else{
 				System.out.println("If you are seeing this, then the findTypes private method was unable to find the type to a declared variable, you should not be seeing this...");
 				
 			}
+			var++;
 		}
 		return types;
 	}
@@ -507,7 +548,22 @@ public class token{
 		return preDefined;
 	}
 	
-	
+	/**
+	*Returns the basic type for the given variable name
+	*@param positions the positions of all of the user variables
+	*@param tokens the current list of generated tokens
+	*@param lookAt an int telling the method where the type actually is
+	*@return String the name of the type that the findTypes needs
+	*/
+	private String getBasicType(ArrayList<String> tokens, int lookAt){
+		String type = "If you see this in the final token there is a problem";
+		for(int i=lookAt;i<tokens.size();i++){
+			if(tokens.get(i)=="Bool"){
+				type = "boolType";
+			}
+		}
+		return type;
+	}
 }
 
 //the spaces down here are to lift all the actual code up higher on the screen in my IDE (Notepad++), if this comment is still here I do apologize, as it has no actual value to the code itself.
