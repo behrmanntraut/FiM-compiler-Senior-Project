@@ -80,6 +80,7 @@ public class token{
 		keys.put("Iwrote","print");
 		//variables
 		keys.put("Didyouknowthat","varDec");
+		keys.put("nothing","null");
 			//Boolean
 			keys.put("anargument","Bool");
 			keys.put("argument","Bool");
@@ -103,6 +104,18 @@ public class token{
 			keys.put("isnow","asign");
 			keys.put("nowlike","asign");
 			keys.put("nowlikes","asign");
+			//number
+			keys.put("number","double");//there is no distinction between number types in FiM so will be implementing the most encompasing type in Java
+			keys.put("a number","double");
+			keys.put("the number","double");
+			//character
+			keys.put("a character","char");
+			keys.put("character","char");
+			keys.put("letter","char");
+			keys.put("a letter","char");
+			keys.put("the character","char");
+			keys.put("the letter","char");
+			
 		
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
@@ -560,6 +573,10 @@ public class token{
 		for(int i=lookAt;i<tokens.size();i++){
 			if(tokens.get(i)=="Bool"){
 				type = "boolType";
+			}else if(tokens.get(i)=="double"){
+				type = "numType";
+			}else if(tokens.get(i)=="char"){
+				type = "charType";
 			}
 		}
 		return type;
