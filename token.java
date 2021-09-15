@@ -449,6 +449,21 @@ public class token{
 						tokenPos.add(thisLinesTokens.size()+1);
 					}
 					start--;
+				}else if(isLiteral(cur)){//this needs to be treated as both a keyword and a variable right now
+					thisLinesTokens.add(getLiteralType(cur));
+					if(lookForEnd){
+						if(specialCase){
+							specialCase=false;
+						}else{
+							varEnd.add(start-1);
+							lookForEnd=false;
+						}
+						
+					}
+					varLoc.add(start);
+					varEnd.add(start);
+					start += len;
+					start--;
 				}
 			}
 		}
@@ -465,6 +480,48 @@ public class token{
 		//symbol table should become an ArrayList, 
 		tokens.addAll(thisLinesTokens);
 		
+	}
+	
+	/**
+	*Returns true if the given string is a FiM++ literal
+	*@param key the word to check
+	*@return boolean true if the key is a literal
+	*/
+	private Boolean isLiteral(String key){
+		try{
+			double dub =  Double.valueOf(key);
+			return true;//this is a number literal
+		}catch (Exception e){//not a number literal
+		}
+		try{
+			if(key.length()==3 && key.charAt(0)=='\'' && key.charAt(2)=='\''){
+				char theChar = key.charAt(1);
+				return true;//this is a char literal
+			}
+		}catch (Exception e){//not a char type
+		}
+		return false;
+	}
+	
+	/**
+	*Returns the literal type of a given key
+	*@param key the literal to examine
+	*@return String the type of the literal, null if none could be found
+	*/
+	private String getLiteralType(String key){
+		try{
+			double dub =  Double.valueOf(key);
+			return "dubLit";//this is a number literal
+		}catch (Exception e){//not a number literal
+		}
+		try{
+			if(key.length()==3 && key.charAt(0)=='\'' && key.charAt(2)=='\''){
+				char theChar = key.charAt(1);
+				return "charLit";//this is a char literal
+			}
+		}catch (Exception e){//not a char type
+		}
+		return null;
 	}
 	
 	/**
