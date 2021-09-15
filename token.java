@@ -115,6 +115,23 @@ public class token{
 			keys.put("a letter","char");
 			keys.put("the character","char");
 			keys.put("the letter","char");
+			//String
+			keys.put("a phrase","string");
+			keys.put("a quote","string");
+			keys.put("a sentence","string");
+			keys.put("a word","string");
+			keys.put("characters","string");
+			keys.put("letters","string");
+			keys.put("phrase","string");
+			keys.put("quote","string");
+			keys.put("sentence","string");
+			keys.put("the characters","string");
+			keys.put("the letters","string");
+			keys.put("the phrase","string");
+			keys.put("the quote","string");
+			keys.put("the sentence","string");
+			keys.put("the word","string");
+			keys.put("word","string");
 			
 		
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
@@ -139,7 +156,7 @@ public class token{
 			tokens.add("n");
 		}
 		tokens.remove(tokens.size()-1);//remove the last newline as the file ends
-		System.out.println(keys);
+		//System.out.println(keys);
 		return tokens.toArray(new String[tokens.size()]);
 		
 		
@@ -416,10 +433,13 @@ public class token{
 	private void doLine(String[] line){
 		ArrayList<String> thisLinesTokens = new ArrayList<String>();
 		ArrayList<Integer> varLoc = new ArrayList<Integer>();
+		ArrayList<Integer> varLocStr = new ArrayList<Integer>();
+		ArrayList<Integer> varEndStr = new ArrayList<Integer>();
 		ArrayList<Integer> varEnd = new ArrayList<Integer>();
 		ArrayList<Integer> tokenPos = new ArrayList<Integer>();
 		Boolean lookForEnd=false;
 		Boolean specialCase=false;
+		Boolean stringsPresent=false;
 		for(int start=0;start<line.length;start++){//each start word
 			for(int len=line.length;len>=0;len--){//each length
 				if(start+len>line.length){
@@ -450,7 +470,8 @@ public class token{
 					}
 					start--;
 				}else if(isLiteral(cur)){//this needs to be treated as both a keyword and a variable right now
-					thisLinesTokens.add(getLiteralType(cur));
+					String thisLinesLiteralType = getLiteralType(cur);
+					thisLinesTokens.add(thisLinesLiteralType);
 					if(lookForEnd){
 						if(specialCase){
 							specialCase=false;
@@ -460,8 +481,15 @@ public class token{
 						}
 						
 					}
+					if(thisLinesLiteralType.equals("strLit")){
+						//need to biuld this variable differently, all spaces will need to be included and any time a \ is seen another \ will need to be added to it
+						stringsPresent=true;
+						varLocStr.add(start);
+						varEndStr.add(start+len-1);
+					}else{
 					varLoc.add(start);
-					varEnd.add(start);
+					varEnd.add(start+len-1);
+					}
 					start += len;
 					start--;
 				}
@@ -472,14 +500,88 @@ public class token{
 				varEnd.add(varLoc.get(varLoc.size()-1));
 			}
 			ArrayList<String> allVars = getVars(varLoc,varEnd,line);
-			symbolTable.addAll(allVars);
+			if(stringsPresent){
+				ArrayList<String> strVars = getStrVars(varLocStr, varEndStr, line);
+				//need to shuffle into proper place in symbol table
+				ArrayList<String> newVars = mergeStrWithVars(strVars,allVars,tokenPos,thisLinesTokens);
+				symbolTable.addAll(newVars);
+				stringsPresent=false;
+			}else{
+				symbolTable.addAll(allVars);
+			}
 			ArrayList<String> types = findTypes(tokenPos,thisLinesTokens, allVars);
 			thisLinesTokens = mergeTokens(thisLinesTokens,types,tokenPos);
 		}
-		//need to still add in all already defined names into the symbol table and the keyword hashmap
-		//symbol table should become an ArrayList, 
 		tokens.addAll(thisLinesTokens);
 		
+	}
+	
+	/**
+	*Marges the string literals with the other user defined items in preperation for the symbol tale addition
+	*@param strs the string literals
+	*@param vars the other defined variables
+	*@param locs the positions the other varaibles are in the token list
+	*@param tokens the tokens for this line
+	*@return ArrayList<Stirng> the combined arraylist
+	*/
+	private ArrayList<String> mergeStrWithVars(ArrayList<String> strs, ArrayList<String> vars, ArrayList<Integer> locs, ArrayList<String> tokens){
+		ArrayList<String> newVars = new ArrayList<String>();
+		int cont=0;
+		int cont2=0;
+		for(int i=0;i<tokens.size();i++){
+			if(tokens.get(i).equals("strLit")){
+				newVars.add(strs.get(cont));
+				cont++;
+			}else if(locs.contains(i)){
+				newVars.add(vars.get(cont2));
+				cont2++;
+			}
+		}
+		return newVars;
+	}
+	
+	/**
+	*Returns all of the string literals in this line
+	*@param s the start positions of the strings
+	*@param e the end positions of the String
+	*@param line the collection of strings that make up this line
+	*@return ArrayList<String> all of the string literals
+	*/
+	private ArrayList<String> getStrVars(ArrayList<Integer> s, ArrayList<Integer> e, String[] line){
+		ArrayList<String> allStrVars = new ArrayList<String>();
+		for(int i=0;i<s.size();i++){
+			allStrVars.add(getStrVar(s.get(i),e.get(i),line));
+		}
+		return allStrVars;
+	}
+	
+	/**
+	*Returns the string literal existing between 2 points in line
+	*@param s the start position in line
+	*@param e the end position in line
+	*@param line the line the string exists in
+	*@return String the completed string literal
+	*/
+	private String getStrVar(int s, int e, String[] line){
+		String builder = "";
+		for(int i=s;i<=e;i++){
+			builder = builder.concat(line[i]);
+			if(i+1<=line.length){
+				try{
+					if(keys.get(line[i+1]).equals("punc")){
+						//punctuation was previously removed, so now it must be reattatched
+					}else{
+						builder = builder.concat(" ");
+					}
+				}catch (NullPointerException n){
+					builder = builder.concat(" ");
+				}
+			}else{
+				builder = builder.concat(" ");
+			}
+		}
+		builder = builder.trim();
+		return builder;
 	}
 	
 	/**
@@ -500,6 +602,11 @@ public class token{
 			}
 		}catch (Exception e){//not a char type
 		}
+		try{
+			if(key.charAt(0)=='"' && key.indexOf('"',1)==key.length()-1){
+				return true;
+			}
+		}catch (Exception e){}//not a string type
 		return false;
 	}
 	
@@ -521,6 +628,10 @@ public class token{
 			}
 		}catch (Exception e){//not a char type
 		}
+		
+		if(key.charAt(0)=='"' && key.indexOf('"',1)==key.length()-1){
+				return "strLit";
+			}
 		return null;
 	}
 	
@@ -596,7 +707,7 @@ public class token{
 				keys.put(allVars.get(var),thisType);
 				
 			}else{
-				System.out.println("If you are seeing this, then the findTypes private method was unable to find the type to a declared variable, you should not be seeing this...");
+				System.out.println("If you are seeing this, then the findTypes private method was unable to find the type to a declared variable, you should not be seeing this... Seen tokens was: " + tokens.get(lookAt));
 				
 			}
 			var++;
@@ -634,6 +745,8 @@ public class token{
 				type = "numType";
 			}else if(tokens.get(i)=="char"){
 				type = "charType";
+			}else if(tokens.get(i)=="string"){
+				type = "strType";
 			}
 		}
 		return type;
