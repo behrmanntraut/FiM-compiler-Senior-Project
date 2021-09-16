@@ -5,7 +5,7 @@ A : F Closing
 F : N F | Imports F | endfile | M F
 M : Manestart X
 X : Q ManeEnd
-Q : N Q | Fullprint Q | endMainfunc
+Q : N Q | Fullprint Q | Declaration Q | endMainfunc
 //
 // opening the file
 //
@@ -39,7 +39,7 @@ Signee : signee
 // print statements - to be updated in milestone 3
 //
 Print : print
-Tempstr : tempStr
+Tempstr : strLit | string | true | false | boolType | numType | charLit | charType | dubLit
 ToPrint : Print Tempstr
 Fullprint : ToPrint Punc
 //
@@ -50,3 +50,27 @@ ManeMethod : manemethod
 ManeDec : Mane ManeMethod
 Manestart : ManeDec Punc
 ManeEnd : ManeMethod Punc
+//
+// Variable declaration
+//
+Declaration : decType Punc
+decType : VarDec FullType
+VarDec : varDec
+Asign : asign
+FullType : varType Type | varType asignDec
+// varType is a collection of terminal symbols, I don't like it but it should work
+// this is all of the variable names, asigned to their types
+varType : strType | boolType | numType | charType
+asignDec : Asign matchedLit
+Type : Bool | double | char | string
+matchedLit : Bool true | Bool false | Bool null | Double Null | Double DubLit | Char Null | Char CharLit | String StrLit | String Null
+Null : null
+Double : double
+Char : char
+String : string
+bool : Bool
+True : true
+False : false
+DubLit : dubLit
+CharLit : charLit
+StrLit : strLit
