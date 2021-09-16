@@ -309,8 +309,6 @@ public class token{
 			return true;
 		}else if(keyWord=="mane"){
 			return true;
-		}else if(keyWord=="print"){//?
-			return true;
 		}else if(keyWord=="varDec"){
 			return true;
 		}
@@ -479,10 +477,8 @@ public class token{
 							varEnd.add(start-1);
 							lookForEnd=false;
 						}
-						
 					}
 					if(thisLinesLiteralType.equals("strLit")){
-						//need to biuld this variable differently, all spaces will need to be included and any time a \ is seen another \ will need to be added to it
 						stringsPresent=true;
 						varLocStr.add(start);
 						varEndStr.add(start+len-1);
@@ -495,7 +491,7 @@ public class token{
 				}
 			}
 		}
-		if(!varLoc.isEmpty()){
+		if(!varLoc.isEmpty() || stringsPresent){
 			if(varLoc.size()!=varEnd.size()){
 				varEnd.add(varLoc.get(varLoc.size()-1));
 			}
@@ -698,9 +694,6 @@ public class token{
 			}else if(tokens.get(lookAt)=="mane"){
 				types.add("manemethod");
 				keys.put(allVars.get(var),"manemethod");
-			}else if(tokens.get(lookAt)=="print"){				//?
-				types.add("tempStr");
-				keys.put(allVars.get(var),"tempStr");
 			}else if(tokens.get(lookAt)=="varDec"){
 				String thisType = getBasicType(tokens,lookAt+1);
 				types.add(thisType);
