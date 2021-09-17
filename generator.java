@@ -77,6 +77,8 @@ public class generator{
 			return MainEnd();
 		}else if(cur.equals("print")){
 			return Print();
+		}else if(cur.equals("varDec")){
+			return varDec();
 		}
 		
 		System.out.println("The code generator did not know what to do when it encountered the token: " + cur);
@@ -209,6 +211,48 @@ public class generator{
 		builder = builder.concat(");");
 		loc += 3;
 		return builder;
+	}
+	
+	/**
+	*Runs the variable declaration line, does both versions
+	*@return String the representation of this line
+	*/
+	private String varDec(){
+		String builder = tabs();
+		//in FiM the type comes after the variable name, need to switch that around
+		builder = builder.concat(primitiveType(tokens.get(loc+1)) + " ");
+		loc += 2;
+		builder = builder.concat(symbols.get(varCount));
+		varCount++;
+		if(tokens.get(loc).equals("asign")){
+			builder = builder.concat(" = ");
+			builder = builder.concat(symbols.get(varCount) + ";");
+			varCount++;
+			loc += 4;
+		}else{
+			builder = builder.concat(";");
+			loc += 2;
+		}
+		return builder;
+	}
+	
+	/**
+	*Given a type token, will return the appropriate stirng type for Java
+	*@param token the token to analyze
+	*@return String the type that token is
+	*/
+	private String primitiveType(String token){
+		if(token.equals("numType")){
+			return "double";
+		}else if(token.equals("charType")){
+			return "char";
+		}else if(token.equals("strType")){
+			return "String";
+		}else if(token.equals("numType")){
+			return "Boolean";
+		}else{
+			throw new IllegalArgumentException("primitive Type was not given a type token, was given the token: " + token);
+		}
 	}
 	
 	
