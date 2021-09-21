@@ -132,7 +132,26 @@ public class token{
 			keys.put("the sentence","string");
 			keys.put("the word","string");
 			keys.put("word","string");
+		//arithmatic
+			//addition
+			keys.put("addedto","addInfix");
+			keys.put("plus","addInfix");
+			keys.put("add","addPrefix");
+			// and is also an infix here, but as it is used to represent mutlpile different things, it is not identified here
+			//subtraction
+			keys.put("minus","subInfix");
+			keys.put("without","subInfix");
+			keys.put("subtract","subPrefix");
+			keys.put("thediferencebetween","subPrefix");
+			//multiplication
+			keys.put("multipliedwith","multInfix");
+			keys.put("times","multInfix");
+			keys.put("multiply","multPrefix");
+			keys.put("theproductof","multPrefix");
 			
+			//division
+			keys.put("dividedby","divInfix");
+			keys.put("divide","divPrefix");
 		
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
@@ -438,13 +457,29 @@ public class token{
 		Boolean lookForEnd=false;
 		Boolean specialCase=false;
 		Boolean stringsPresent=false;
+		Boolean lookingForInfix=false;
 		for(int start=0;start<line.length;start++){//each start word
 			for(int len=line.length;len>=0;len--){//each length
 				if(start+len>line.length){
 					continue;
 				}
 				String cur = build(line,start,len);
-				if(isKeyword(cur)){
+				if(lookingForInfix && isInfix(cur)){
+					String infixType = getInfixType(thisLinesTokens, cur);
+					thisLinesTokens.add(infixType);
+					if(lookForEnd){
+						if(specialCase){
+							specialCase=false;
+						}else{
+							varEnd.add(start-1);
+							lookForEnd=false;
+						}
+						
+					}
+					start+=len;
+					start--;
+					lookingForInfix=false;
+				}else if(isKeyword(cur)){
 					thisLinesTokens.add(keys.get(cur));
 					if(lookForEnd){
 						if(specialCase){
@@ -465,6 +500,9 @@ public class token{
 						lookForEnd=true;
 						specialCase=true;
 						tokenPos.add(thisLinesTokens.size()+1);
+					}else if(isPrefix(cur)){
+						//need to look for the special infix item
+						lookingForInfix=true;
 					}
 					start--;
 				}else if(isLiteral(cur)){//this needs to be treated as both a keyword and a variable right now
@@ -744,6 +782,67 @@ public class token{
 		}
 		return type;
 	}
+	
+	/**
+	*Returns true if the passed token is a prefix to a arithmatic statement
+	*@param token the token to check
+	*@return Boolean true if it is a prefix identifier
+	*/
+	private Boolean isPrefix(String token){
+		if(keys.get(token).equals("addPrefix")){
+			return true;
+		}else if(keys.get(token).equals("subPrefix")){
+			return true;
+		}else if(keys.get(token).equals("multPrefix")){
+			return true;
+		}else if(keys.get(token).equals("divPrefix")){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	*Determines if the given string is an infix token
+	*@param token the string to check
+	*@return Boolean true if the given string is an infix token
+	*/
+	private Boolean isInfix(String token){
+		if(token.equals("and")){
+			return true;
+		}else if(token.equals("from")){
+			return true;
+		}else if(token.equals("by")){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	*Returns the type of infix that this infix is
+	*@param tokens the current line of tokens
+	*@param infix the particular infix to get the type of
+	*@return String the infix type
+	*/
+	private String getInfixType(ArrayList<String> tokens, String infix){
+		for(int i=0;i<tokens.size();i++){
+			String token = tokens.get(i);
+			if(token.equals("addPrefix") && infix.equals("and")){
+				return "addInfix2";
+			}else if(token.equals("subPrefix") && (infix.equals("and") || infix.equals("from"))){
+				return "subInfix2";
+			}else if(token.equals("multPrefix") && (infix.equals("and") || infix.equals("by"))){
+				return "multInfix2";
+			}else if(token.equals("divPrefix") && (infix.equals("and") || infix.equals("by"))){
+				return "divInfix2";
+			}
+			
+		}
+		return null;
+	}
+	
+	
 }
 
 //the spaces down here are to lift all the actual code up higher on the screen in my IDE (Notepad++), if this comment is still here I do apologize, as it has no actual value to the code itself.
