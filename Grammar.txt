@@ -74,3 +74,12 @@ False : false
 DubLit : dubLit
 CharLit : charLit
 StrLit : strLit
+//
+// Arithmatic operations
+// 
+// Infix operators
+FullInfix : FullInfix BackEnd | BeginOp Value
+BeginOp : Value Op
+Value : numType | Double DubLit
+Op : addInfix | subInfix | multInfix | divInfix
+BackEnd : Op Value
