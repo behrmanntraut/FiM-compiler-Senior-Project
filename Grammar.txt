@@ -5,7 +5,7 @@ A : F Closing
 F : N F | Imports F | endfile | M F
 M : Manestart X
 X : Q ManeEnd
-Q : N Q | Fullprint Q | Declaration Q | endMainfunc
+Q : N Q | Fullprint Q | Declaration Q | Fan Q | endMainfunc
 //
 // opening the file
 //
@@ -39,7 +39,7 @@ Signee : signee
 // print statements - to be updated in milestone 3
 //
 Print : print
-Tempstr : strLit | string | true | false | boolType | numType | charLit | charType | dubLit
+Tempstr : strLit | string | true | false | boolType | numType | charLit | charType | dubLit | Tempstr BackEnd | BeginOp Value | PV IV
 ToPrint : Print Tempstr
 Fullprint : ToPrint Punc
 //
@@ -61,7 +61,10 @@ FullType : varType Type | varType asignDec
 // varType is a collection of terminal symbols, I don't like it but it should work
 // this is all of the variable names, asigned to their types
 varType : strType | boolType | numType | charType
-asignDec : Asign matchedLit
+asignDec : Asign matchedLit | asignDec BackEnd | PrefixAsignment IV 
+// Used for prefix things, made to make this happier
+PrefixAsignment : Asign PV
+//
 Type : Bool | double | char | string
 matchedLit : Bool true | Bool false | Bool null | Double Null | Double DubLit | Char Null | Char CharLit | String StrLit | String Null
 Null : null
@@ -75,11 +78,32 @@ DubLit : dubLit
 CharLit : charLit
 StrLit : strLit
 //
+//
 // Arithmatic operations
 // 
+//
 // Infix operators
 FullInfix : FullInfix BackEnd | BeginOp Value
 BeginOp : Value Op
 Value : numType | Double DubLit
 Op : addInfix | subInfix | multInfix | divInfix
 BackEnd : Op Value
+//
+// Prefix operators
+//
+AllPrefix : FullPrefix Punc | FullPrefix BP
+FullPrefix : PV IV
+PV : Prefix Value
+Prefix : addPrefix | subPrefix | multPrefix | divPrefix
+IV : Infix Value
+Infix : addInfix2 | subInfix2 | multInfix2 | divInfix2
+BP : BackEnd Punc | BackEnd BP
+//
+// Asigning a double to be a new value
+//
+Fan : asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix
+asignNum : NumType Asign
+NumType : numType
+FinishAsignNum : FullInfix Punc
+numTypePunc : numType punc
+VP : Value Punc
