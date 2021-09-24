@@ -491,7 +491,9 @@ public class token{
 						
 					}
 					start+=len;
-					if(specialKeyword(keys.get(cur))){//next position starts a user defined name
+					if(symbolTable.contains(cur)){
+						symbolTable.add(cur);
+					}if(specialKeyword(keys.get(cur))){//next position starts a user defined name
 						varLoc.add(start);
 						lookForEnd=true;
 						tokenPos.add(thisLinesTokens.size());
