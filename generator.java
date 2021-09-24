@@ -79,6 +79,8 @@ public class generator{
 			return Print();
 		}else if(cur.equals("varDec")){
 			return varDec();
+		}else if(cur.equals("numType")){
+			return numAsign();
 		}
 		
 		System.out.println("The code generator did not know what to do when it encountered the token: " + cur);
@@ -206,10 +208,16 @@ public class generator{
 	private String Print(){
 		String builder = tabs();
 		builder = builder.concat("System.out.println(");
-		builder = builder.concat(symbols.get(varCount));
-		varCount++;
-		builder = builder.concat(");");
-		loc += 3;
+		loc++;
+		if(isNumType()){
+			builder = builder.concat(numStatement() + ");");
+			loc++;
+		}else{
+			builder = builder.concat(symbols.get(varCount));
+			varCount++;
+			builder = builder.concat(");");
+			loc += 2;
+		}
 		return builder;
 	}
 	
@@ -226,9 +234,15 @@ public class generator{
 		varCount++;
 		if(tokens.get(loc).equals("asign")){
 			builder = builder.concat(" = ");
-			builder = builder.concat(symbols.get(varCount) + ";");
-			varCount++;
-			loc += 4;
+			loc++;
+			if(isNumType()){
+				builder = builder.concat(numStatement() + ";");
+				loc++;
+			}else{
+				builder = builder.concat(symbols.get(varCount) + ";");
+				varCount++;
+				loc += 3;
+			}
 		}else{
 			builder = builder.concat(";");
 			loc += 2;
@@ -253,6 +267,100 @@ public class generator{
 		}else{
 			throw new IllegalArgumentException("primitive Type was not given a type token, was given the token: " + token);
 		}
+	}
+	
+	/**
+	*The number asignment statement
+	*@return String this line
+	*/
+	private String numAsign(){
+		String builder = tabs();
+		builder = builder.concat(symbols.get(varCount));
+		loc++;
+		varCount++;
+		if(tokens.get(loc).equals("asign")){
+			builder = builder.concat(" = ");
+			loc++;
+			builder = builder.concat(numStatement());
+		}else{
+			throw new IllegalArgumentException("Expecting token \"aign\" but instead recieved: " + tokens.get(loc));
+		}
+		builder = builder.concat(";");
+		loc++;
+		return builder;
+	}
+	
+	/**
+	*Builds a number statement using the basic operators and both formats
+	*@return String the number statement generated
+	*/
+	private String numStatement(){
+		String builder = "";
+		while(!tokens.get(loc).equals("punc")){
+			if(tokens.get(loc).equals("double")){//a literal value
+				builder=builder.concat(symbols.get(varCount));
+				loc+=2;
+				varCount++;
+			}else if(tokens.get(loc).equals("addInfix")){//+
+				builder = builder.concat(" + ");
+				loc++;
+			}else if(tokens.get(loc).equals("subInfix")){//-
+				builder = builder.concat(" - ");
+				loc++;
+			}else if(tokens.get(loc).equals("multInfix")){//*
+				builder = builder.concat(" * ");
+				loc++;
+			}else if(tokens.get(loc).equals("divInfix")){//div
+				builder = builder.concat(" / ");
+				loc++;
+			}else if(tokens.get(loc).equals("numType")){
+				builder = builder.concat(symbols.get(varCount));
+				varCount++;
+				loc++;
+			}else if(tokens.get(loc).equals("addInfix2")){//+
+				builder = builder.concat(" + ");
+				loc++;
+			}else if(tokens.get(loc).equals("subInfix2")){//-
+				builder = builder.concat(" - ");
+				loc++;
+			}else if(tokens.get(loc).equals("multInfix2")){//*
+				builder = builder.concat(" * ");
+				loc++;
+			}else if(tokens.get(loc).equals("divInfix2")){//div
+				builder = builder.concat(" / ");
+				loc++;
+			}else if(tokens.get(loc).equals("addPrefix")){//+
+				loc++;
+			}else if(tokens.get(loc).equals("subPrefix")){//-
+				loc++;
+			}else if(tokens.get(loc).equals("multPrefix")){//*
+				loc++;
+			}else if(tokens.get(loc).equals("divPrefix")){//div
+				loc++;
+			}
+		}
+		return builder;
+	}
+	
+	/**
+	*Returns true if the given token is probably a number
+	*@return Boolean true if this is probably a number
+	*/
+	private Boolean isNumType(){
+		if(tokens.get(loc).equals("double")){
+			return true;
+		}else if(tokens.get(loc).equals("numType")){
+			return true;
+		}else if(tokens.get(loc).equals("addPrefix")){
+			return true;
+		}else if(tokens.get(loc).equals("subPrefix")){
+			return true;
+		}else if(tokens.get(loc).equals("multPrefix")){
+			return true;
+		}else if(tokens.get(loc).equals("divPrefix")){
+			return true;
+		}
+		return false;
 	}
 	
 	
