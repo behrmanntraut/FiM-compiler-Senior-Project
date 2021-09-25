@@ -37,11 +37,7 @@ public class generator{
 		String fileName = ReportName.concat(".java");
 		try{
 			File output = new File(fileName);
-			if(output.createNewFile()){
-				
-			}else{
-				System.out.println("File " + fileName + " already exists, please delete old file or rename your report");
-			}
+			output.createNewFile();
 			try{
 				FileWriter writer = new FileWriter(fileName);
 				System.out.println(master);
@@ -336,6 +332,12 @@ public class generator{
 			}else if(tokens.get(loc).equals("multPrefix")){//*
 				loc++;
 			}else if(tokens.get(loc).equals("divPrefix")){//div
+				loc++;
+			}else if(tokens.get(loc).equals("increment")){//increment
+				builder = builder.concat("++");
+				loc++;
+			}else if(tokens.get(loc).equals("deccrement")){//deccrement
+				builder = builder.concat("--");
 				loc++;
 			}
 		}
