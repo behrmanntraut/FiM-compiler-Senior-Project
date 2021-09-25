@@ -137,12 +137,14 @@ public class token{
 			keys.put("addedto","addInfix");
 			keys.put("plus","addInfix");
 			keys.put("add","addPrefix");
+			keys.put("gotonemore","increment");
 			// and is also an infix here, but as it is used to represent mutlpile different things, it is not identified here
 			//subtraction
 			keys.put("minus","subInfix");
 			keys.put("without","subInfix");
 			keys.put("subtract","subPrefix");
 			keys.put("thediferencebetween","subPrefix");
+			keys.put("gotoneless","deccrement");
 			//multiplication
 			keys.put("multipliedwith","multInfix");
 			keys.put("times","multInfix");
