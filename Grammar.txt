@@ -5,7 +5,7 @@ A : F Closing
 F : N F | Imports F | endfile | M F
 M : Manestart X
 X : Q ManeEnd
-Q : N Q | Fullprint Q | Declaration Q | Fan Q | endMainfunc
+Q : N Q | Fullprint Q | Declaration Q | Fan Q | endMainfunc | IncrimentOnly Q
 //
 // opening the file
 //
@@ -39,7 +39,7 @@ Signee : signee
 // print statements - to be updated in milestone 3
 //
 Print : print
-Tempstr : strLit | string | true | false | boolType | numType | charLit | charType | dubLit | Tempstr BackEnd | BeginOp Value | PV IV
+Tempstr : strLit | string | true | false | boolType | numType | charLit | charType | dubLit | Tempstr BackEnd | BeginOp Value | PV IV | NumType Inc | NumType Dec
 ToPrint : Print Tempstr
 Fullprint : ToPrint Punc
 //
@@ -85,7 +85,7 @@ StrLit : strLit
 // Infix operators
 FullInfix : FullInfix BackEnd | BeginOp Value
 BeginOp : Value Op
-Value : numType | Double DubLit
+Value : numType | Double DubLit | NumType Inc | NumType Dec
 Op : addInfix | subInfix | multInfix | divInfix
 BackEnd : Op Value
 //
@@ -105,5 +105,12 @@ Fan : asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum Al
 asignNum : NumType Asign
 NumType : numType
 FinishAsignNum : FullInfix Punc
-numTypePunc : numType punc
+numTypePunc : numType punc | FullIncrement Punc
 VP : Value Punc
+//
+// Increment and Decrement
+//
+Inc : increment
+Dec : decrement
+FullIncrement : NumType Inc | NumType Dec
+IncrimentOnly : FullIncrement Punc
