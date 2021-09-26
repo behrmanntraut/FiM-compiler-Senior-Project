@@ -177,7 +177,11 @@ public class token{
 			keys.put("the words","strArray");
 			keys.put("words","strArray");
 			//char array is considered a string, so not implemented
-			
+		//Boolean operators
+		keys.put("and","and");
+		keys.put("or","or");
+		keys.put("not","not");
+		keys.put("either","XOR");//needs unique case in generator
 		
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
