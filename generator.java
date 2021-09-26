@@ -260,6 +260,12 @@ public class generator{
 			return "String";
 		}else if(token.equals("numType")){
 			return "Boolean";
+		}else if(token.equals("strArrayType")){
+			return "String[]";
+		}else if(token.equals("numArrayType")){
+			return "doulbe[]";
+		}else if(token.equals("boolArrayType")){
+			return "Boolean[]";
 		}else{
 			throw new IllegalArgumentException("primitive Type was not given a type token, was given the token: " + token);
 		}
