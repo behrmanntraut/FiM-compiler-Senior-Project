@@ -36,6 +36,17 @@ public class parse{
 		//System.out.println("Passing in: " + pass);
 		compute();
 		//System.out.println(pass);
+		
+		//uncomment for testing purposes
+		/*
+		ArrayList keyss = new ArrayList(comp.keySet());
+		for(int i=0;i<keyss.size();i++){
+			if(comp.get(keyss.get(i))!= null){
+				System.out.println(comp.get(keyss.get(i)) + "\t\t" + keyss.get(i));
+			}
+		}
+		*/
+		
 		if(comp.get(pass)==null){
 			return false;
 		}else{
