@@ -150,10 +150,34 @@ public class token{
 			keys.put("times","multInfix");
 			keys.put("multiply","multPrefix");
 			keys.put("theproductof","multPrefix");
-			
 			//division
 			keys.put("dividedby","divInfix");
 			keys.put("divide","divPrefix");
+		//arrays
+			//Boolean
+			keys.put("arguments","boolArray");
+			keys.put("the arguments","boolArray");
+			keys.put("logics","boolArray");
+			keys.put("the logics","boolArray");
+			//numbers
+			keys.put("many numbers","numArray");
+			keys.put("numbers","numArray");
+			keys.put("the numbers","numArray");
+			//Stirng
+			keys.put("many phrases","strArray");
+			keys.put("many words","strArray");
+			keys.put("phrases","strArray");
+			keys.put("many sentences","strArray");
+			keys.put("many quotes","strArray");
+			keys.put("quotes","strArray");
+			keys.put("sentences","strArray");
+			keys.put("the phrases","strArray");
+			keys.put("the quotes","strArray");
+			keys.put("the sentences","strArray");
+			keys.put("the words","strArray");
+			keys.put("words","strArray");
+			//char array is considered a string, so not implemented
+			
 		
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
@@ -782,6 +806,12 @@ public class token{
 				type = "charType";
 			}else if(tokens.get(i)=="string"){
 				type = "strType";
+			}else if(tokens.get(i)=="strArray"){
+				type = "strArrayType";
+			}else if(tokens.get(i)=="numArray"){
+				type = "numArrayType";
+			}else if(tokens.get(i)=="boolArray"){
+				type = "boolArrayType";
 			}
 		}
 		return type;

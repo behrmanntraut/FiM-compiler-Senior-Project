@@ -60,12 +60,12 @@ Asign : asign
 FullType : varType Type | varType asignDec
 // varType is a collection of terminal symbols, I don't like it but it should work
 // this is all of the variable names, asigned to their types
-varType : strType | boolType | numType | charType
+varType : strType | boolType | numType | charType | strArrayType | numArrayType | boolArrayType
 asignDec : Asign matchedLit | asignDec BackEnd | PrefixAsignment IV 
 // Used for prefix things, made to make this happier
 PrefixAsignment : Asign PV
 //
-Type : Bool | double | char | string
+Type : Bool | double | char | string | boolArray | strArray | numArray
 matchedLit : Bool true | Bool false | Bool null | Double Null | Double DubLit | Char Null | Char CharLit | String StrLit | String Null
 Null : null
 Double : double
