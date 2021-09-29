@@ -106,20 +106,20 @@ public class token{
 			keys.put("nowlikes","asign");
 			//number
 			keys.put("number","double");//there is no distinction between number types in FiM so will be implementing the most encompasing type in Java
-			keys.put("a number","double");
-			keys.put("the number","double");
+			keys.put("anumber","double");
+			keys.put("thenumber","double");
 			//character
 			keys.put("a character","char");
 			keys.put("character","char");
 			keys.put("letter","char");
-			keys.put("a letter","char");
-			keys.put("the character","char");
-			keys.put("the letter","char");
+			keys.put("aletter","char");
+			keys.put("thecharacter","char");
+			keys.put("theletter","char");
 			//String
-			keys.put("a phrase","string");
-			keys.put("a quote","string");
-			keys.put("a sentence","string");
-			keys.put("a word","string");
+			keys.put("aphrase","string");
+			keys.put("aquote","string");
+			keys.put("asentence","string");
+			keys.put("aword","string");
 			keys.put("characters","string");
 			keys.put("letters","string");
 			keys.put("phrase","string");
@@ -523,7 +523,8 @@ public class token{
 					start+=len;
 					if(symbolTable.contains(cur)){
 						symbolTable.add(cur);
-					}if(specialKeyword(keys.get(cur))){//next position starts a user defined name
+					}
+					if(specialKeyword(keys.get(cur))){//next position starts a user defined name
 						varLoc.add(start);
 						lookForEnd=true;
 						tokenPos.add(thisLinesTokens.size());
@@ -537,6 +538,7 @@ public class token{
 						lookingForInfix=true;
 					}
 					start--;
+					break;
 				}else if(isLiteral(cur)){//this needs to be treated as both a keyword and a variable right now
 					String thisLinesLiteralType = getLiteralType(cur);
 					thisLinesTokens.add(thisLinesLiteralType);
