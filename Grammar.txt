@@ -5,7 +5,7 @@ A : F Closing
 F : N F | Imports F | endfile | M F
 M : Manestart X
 X : Q ManeEnd
-Q : N Q | Fullprint Q | Declaration Q | Fan Q | endMainfunc | IncrimentOnly Q
+Q : N Q | Fullprint Q | Declaration Q | Fan Q | endMainfunc | IncrimentOnly Q | AsignBoolLine Q
 //
 // opening the file
 //
@@ -57,7 +57,7 @@ Declaration : decType Punc
 decType : VarDec FullType
 VarDec : varDec
 Asign : asign
-FullType : varType Type | varType asignDec
+FullType : varType Type | varType asignDec | varType asignBool
 // varType is a collection of terminal symbols, I don't like it but it should work
 // this is all of the variable names, asigned to their types
 varType : strType | boolType | numType | charType | strArrayType | numArrayType | boolArrayType
@@ -65,6 +65,7 @@ asignDec : Asign matchedLit | asignDec BackEnd | PrefixAsignment IV
 // Used for prefix things, made to make this happier
 PrefixAsignment : Asign PV
 //
+asignBool : Asign BoolValue | Asign FullBoolStatement
 Type : Bool | double | char | string | boolArray | strArray | numArray
 matchedLit : Bool true | Bool false | Bool null | Double Null | Double DubLit | Char Null | Char CharLit | String StrLit | String Null
 Null : null
@@ -114,3 +115,23 @@ Inc : increment
 Dec : decrement
 FullIncrement : NumType Inc | NumType Dec
 IncrimentOnly : FullIncrement Punc
+// 
+// Boolean statements
+//
+Nb : Not BoolValue | bool True | bool False | bool Null | boolType
+BeginBoolStatement : Nb And | Nb Or
+FullBoolStatement : BeginBoolStatement Nb | FullBoolStatement BoolBack | FullBeginXOR Nb
+BoolBack : And Nb | Or Nb
+BoolValue : bool True | bool False | bool Null | boolType
+And : and
+Or : or
+Not : not
+BeginXOR : xor Nb
+xor : XOR
+FullBeginXOR : BeginXOR Or
+//
+// asigning a boolean
+//
+BoolType : boolType
+FullAsignBool : BoolType asignBool
+AsignBoolLine : FullAsignBool Punc
