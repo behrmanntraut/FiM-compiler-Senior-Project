@@ -77,6 +77,8 @@ public class generator{
 			return varDec();
 		}else if(cur.equals("numType")){
 			return numAsign();
+		}else if(cur.equals("boolType")){
+			return boolAsign();
 		}
 		
 		System.out.println("The code generator did not know what to do when it encountered the token: " + cur);
@@ -234,6 +236,9 @@ public class generator{
 			if(isNumType()){
 				builder = builder.concat(numStatement() + ";");
 				loc++;
+			}else if(isBoolType()){
+				builder = builder.concat(boolStatement() + ";");
+				loc++;
 			}else{
 				builder = builder.concat(symbols.get(varCount) + ";");
 				varCount++;
@@ -258,7 +263,7 @@ public class generator{
 			return "char";
 		}else if(token.equals("strType")){
 			return "String";
-		}else if(token.equals("numType")){
+		}else if(token.equals("boolType")){
 			return "Boolean";
 		}else if(token.equals("strArrayType")){
 			return "String[]";
@@ -369,6 +374,73 @@ public class generator{
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	*Returns the string representing a boolean asignment
+	*@return String the boolean asignment passed,but in java
+	*/
+	private String boolAsign(){
+		String builder = tabs();
+		builder = builder.concat(symbols.get(varCount) + " = ");
+		loc += 2;
+		varCount++;
+		builder = builder.concat(boolStatement() + ";");
+		loc++;
+		return builder;
+	}
+	
+	/**
+	*Returns the string representing the bool statement
+	*@return String the boolean statement in java code
+	*/
+	private String boolStatement(){
+		String builder = "";
+		Boolean XORflag = false;
+		if(tokens.get(loc).equals("XOR")){
+			XORflag=true;
+		}
+		loc++;
+		while(!tokens.get(loc).equals("punc")){
+			if(tokens.get(loc).equals("Bool")){
+				//ignore
+			}else if(tokens.get(loc).equals("false")){
+				builder = builder.concat("false");
+			}else if(tokens.get(loc).equals("true")){
+				builder = builder.concat("true");
+			}else if(tokens.get(loc).equals("boolType")){
+				builder = builder.concat(symbols.get(varCount));
+				varCount++;
+			}else if(tokens.get(loc).equals("and")){
+				builder = builder.concat(" && ");
+			}else if(tokens.get(loc).equals("or")){
+				if(XORflag){
+					builder = builder.concat(" ^ ");
+				}else{
+					builder = builder.concat(" || ");
+				}
+			}else{
+				throw new IllegalArgumentException("Unsure of how to handle the token: " + tokens.get(loc) + " in a boolean statement");
+			}
+			loc++;
+		}
+		return builder;
+	}
+	
+	/**
+	*Returns if this statement is a boolean one
+	*@return Boolean true if it is a boolean statement
+	*/
+	private Boolean isBoolType(){
+		if(tokens.get(loc).equals("Bool")){
+			return true;
+		}else if(tokens.get(loc).equals("boolType")){
+			return true;
+		}else if(tokens.get(loc).equals("XOR")){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	
