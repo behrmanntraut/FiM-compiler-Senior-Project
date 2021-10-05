@@ -662,6 +662,8 @@ public class token{
 					}
 				}catch (NullPointerException n){
 					builder = builder.concat(" ");
+				}catch (ArrayIndexOutOfBoundsException A){
+					builder = builder.concat(" ");
 				}
 			}else{
 				builder = builder.concat(" ");
