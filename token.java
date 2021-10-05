@@ -326,9 +326,12 @@ public class token{
 			String[] edited = new String[0];
 			int cont=0;
 			if(temp.get(i).length==1){
-				continue;//empty line
+				if(temp.get(i)[0].isEmpty()){
+					continue;//empty line
+				}
 			}
 			for(int j=0;j<temp.get(i).length;j++){//check if each word has punctuation at the end of it
+			
 				if(seen && containsPunc(temp.get(i)[j])){
 					edited = sepPunc(edited,j+cont);
 					cont++;
