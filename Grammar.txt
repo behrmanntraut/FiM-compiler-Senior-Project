@@ -5,7 +5,9 @@ A : F Closing
 F : N F | Imports F | endfile | M F
 M : Manestart X
 X : Q ManeEnd
-Q : N Q | Fullprint Q | Declaration Q | Fan Q | endMainfunc | IncrimentOnly Q | AsignBoolLine Q
+Q : GeneralLine Q | endMainfunc 
+// A structure to store any general line
+GeneralLine : n | decType Punc | asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix | FullIncrement Punc | FullAsignBool Punc | CompleteIfLine QQ | ToPrint Punc
 //
 // opening the file
 //
@@ -135,3 +137,15 @@ FullBeginXOR : BeginXOR Or
 BoolType : boolType
 FullAsignBool : BoolType asignBool
 AsignBoolLine : FullAsignBool Punc
+//
+// If statement
+//
+If : if
+IfStatement : If BoolValue | If FullBoolStatement
+CompleteIfLine : IfStatement Punc | IfStatement TP
+QQ : EndConditional Punc | GeneralLine QQ | EP QQ
+EndConditional : endConditional
+Then : then
+TP : Then Punc
+Else : else
+EP : Else Punc
