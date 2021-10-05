@@ -182,7 +182,23 @@ public class token{
 		keys.put("or","or");
 		keys.put("not","not");
 		keys.put("either","XOR");//needs unique case in generator
-		
+		//if else
+		keys.put("If","if");
+		keys.put("When","if");
+		keys.put("then","then");
+		keys.put("Otherwise","else");
+		keys.put("Orelse","else");
+		keys.put("That'swhatIwoulddo","endConditional");
+		//switch
+		keys.put("Inregardsto","switch");
+		keys.put("Onthe","case");
+		keys.put("ndhoof","caseClose");
+		keys.put("hoof","caseClose");
+		keys.put("rdhoof","caseClose");
+		keys.put("sthoof","caseClose");
+		keys.put("thhoof","caseClose");
+		keys.put("Ifallelsefails","defaultCase");
+		keys.put("That'swhatIdid","switchClose");
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
 	}
