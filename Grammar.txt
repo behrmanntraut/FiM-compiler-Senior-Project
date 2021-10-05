@@ -7,7 +7,7 @@ M : Manestart X
 X : Q ManeEnd
 Q : GeneralLine Q | endMainfunc 
 // A structure to store any general line
-GeneralLine : n | decType Punc | asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix | FullIncrement Punc | FullAsignBool Punc | CompleteIfLine QQ | ToPrint Punc
+GeneralLine : n | decType Punc | asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix | FullIncrement Punc | FullAsignBool Punc | CompleteIfLine QQ | ToPrint Punc | BSP InnerCase
 //
 // opening the file
 //
@@ -149,3 +149,19 @@ Then : then
 TP : Then Punc
 Else : else
 EP : Else Punc
+// 
+// Switch statements
+//
+Switch : switch
+BeginSwitch : Switch NumType
+BSP : BeginSwitch Punc
+CasePunc : CaseClose Punc
+CaseClose : caseClose
+Case : case
+caseStart : Case DubLit
+FullCase : caseStart CasePunc | DefaultCase Punc
+SwitchClose : switchClose
+DefaultCase : defaultCase
+InnerCase : SwitchClose Punc | GeneralLine InnerCase | FullCase InnerCase
+
+// need to implement in main call of generalline
