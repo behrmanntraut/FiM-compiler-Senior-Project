@@ -857,9 +857,8 @@ public class token{
 				String thisType = getBasicType(tokens,lookAt+1);
 				types.add(thisType);
 				keys.put(allVars.get(var),thisType);
-				
 			}else{
-				System.out.println("If you are seeing this, then the findTypes private method was unable to find the type to a declared variable, you should not be seeing this... Seen tokens was: " + tokens.get(lookAt));
+				throw new IllegalArgumentException("If you are seeing this, then the findTypes private method was unable to find the type to a declared variable, you should not be seeing this... Seen tokens was: " + tokens.get(lookAt));
 				
 			}
 			var++;
@@ -892,19 +891,19 @@ public class token{
 		String type = "If you see this in the final token there is a problem";
 		for(int i=lookAt;i<tokens.size();i++){
 			if(tokens.get(i)=="Bool"){
-				type = "boolType";
+				return "boolType";
 			}else if(tokens.get(i)=="double"){
-				type = "numType";
+				return "numType";
 			}else if(tokens.get(i)=="char"){
-				type = "charType";
+				return "charType";
 			}else if(tokens.get(i)=="string"){
-				type = "strType";
+				return "strType";
 			}else if(tokens.get(i)=="strArray"){
-				type = "strArrayType";
+				return "strArrayType";
 			}else if(tokens.get(i)=="numArray"){
-				type = "numArrayType";
+				return "numArrayType";
 			}else if(tokens.get(i)=="boolArray"){
-				type = "boolArrayType";
+				return "boolArrayType";
 			}
 		}
 		return type;
