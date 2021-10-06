@@ -79,10 +79,13 @@ public class generator{
 			return numAsign();
 		}else if(cur.equals("boolType")){
 			return boolAsign();
+		}else if(cur.equals("if")){
+			return ifStatement();
+		}else if(cur.equals("endConditional")){
+			return ifEnd();
 		}
-		
-		System.out.println("The code generator did not know what to do when it encountered the token: " + cur);
-		return "";
+		System.out.println(loc);
+		throw new IllegalArgumentException("The code generator did not know what to do when it encountered the token: " + cur);
 	}
 	
 	/**
@@ -350,6 +353,8 @@ public class generator{
 			}else if(tokens.get(loc).equals("deccrement")){//deccrement
 				builder = builder.concat("--");
 				loc++;
+			}else{
+				break; //unsure of what to do here, so breaking loop
 			}
 		}
 		return builder;
@@ -441,6 +446,35 @@ public class generator{
 		}else{
 			return false;
 		}
+	}
+	
+	/**
+	*An if statement
+	*@return string the line for this if
+	*/
+	private String ifStatement(){
+		String builder = tabs();
+		tabCount++;
+		builder = builder.concat("if(");
+		builder = builder.concat(boolStatement());
+		if(tokens.get(loc).equals("then")){
+			loc++;
+		}
+		loc++;
+		builder = builder.concat("){");
+		return builder;
+	}
+	
+	/**
+	*The end of an if statement
+	*@return String the end of an if statement
+	*/
+	private String ifEnd(){
+		tabCount--;
+		String builder = tabs();
+		builder = builder.concat("}");
+		loc+=2;
+		return builder;
 	}
 	
 	
