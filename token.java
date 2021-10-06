@@ -199,6 +199,72 @@ public class token{
 		keys.put("thhoof","caseClose");
 		keys.put("Ifallelsefails","defaultCase");
 		keys.put("That'swhatIdid","switchClose");
+		//numbers to booleans
+			//equals
+			keys.put("had","equals");
+			keys.put("has","equals");
+			keys.put("is","equals");
+			keys.put("was","equals");
+			keys.put("were","equals");
+			//not equals
+			keys.put("hadn't","notEqual");
+			keys.put("hadnot","notEqual");
+			keys.put("hasn't","notEqual");
+			keys.put("hasnot","notEqual");
+			keys.put("isn't","notEqual");
+			keys.put("isnot","notEqual");
+			keys.put("wasn't","notEqual");
+			keys.put("wasnot","notEqual");
+			keys.put("weren't","notEqual");
+			keys.put("werenot","notEqual");
+			//greater than
+			keys.put("hadmorethan","greaterThan");
+			keys.put("hasmorethan","greaterThan");
+			keys.put("isgreaterthan","greaterThan");
+			keys.put("ismorethan","greaterThan");
+			keys.put("wasgreaterthan","greaterThan");
+			keys.put("wasmorethan","greaterThan");
+			keys.put("weregreaterthan","greaterThan");
+			keys.put("weremorethan","greaterThan");
+			//greater than or equal to
+			keys.put("had no less than","greaterThanOrEqual");
+			keys.put("has no less than","greaterThanOrEqual");
+			keys.put("is no less than","greaterThanOrEqual");
+			keys.put("is not less than","greaterThanOrEqual");
+			keys.put("isn't less than","greaterThanOrEqual");
+			keys.put("was no less than","greaterThanOrEqual");
+			keys.put("was not less than","greaterThanOrEqual");
+			keys.put("wasn't less than","greaterThanOrEqual");
+			keys.put("were no less than","greaterThanOrEqual");
+			keys.put("were not less than","greaterThanOrEqual");
+			keys.put("weren't less than","greaterThanOrEqual");
+			//less than
+			keys.put("hadlessthan","lessThan");
+			keys.put("haslessthan","lessThan");
+			keys.put("islessthan","lessThan");
+			keys.put("waslessthan","lessThan");
+			keys.put("werelessthan","lessThan");
+			//less than or equal to : there are 19 of these...
+			keys.put("had no more than","lessThanOrEqual");
+			keys.put("has no more than","lessThanOrEqual");
+			keys.put("is no greater than","lessThanOrEqual");
+			keys.put("is no more than","lessThanOrEqual");
+			keys.put("is not greater than","lessThanOrEqual");
+			keys.put("is not more than","lessThanOrEqual");
+			keys.put("isn't greater than","lessThanOrEqual");
+			keys.put("isn't more than","lessThanOrEqual");
+			keys.put("was no greater than","lessThanOrEqual");
+			keys.put("was no more than","lessThanOrEqual");
+			keys.put("was not greater than","lessThanOrEqual");
+			keys.put("was not more than","lessThanOrEqual");
+			keys.put("wasn't greater than","lessThanOrEqual");
+			keys.put("wasn't more than","lessThanOrEqual");
+			keys.put("were no greater than","lessThanOrEqual");
+			keys.put("were no more than","lessThanOrEqual");
+			keys.put("were not greater than","lessThanOrEqual");
+			keys.put("were not more than","lessThanOrEqual");
+			keys.put("weren't greater than","lessThanOrEqual");
+			keys.put("weren't more than","lessThanOrEqual");
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
 	}
