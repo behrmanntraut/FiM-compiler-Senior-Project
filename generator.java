@@ -83,6 +83,8 @@ public class generator{
 			return ifStatement();
 		}else if(cur.equals("endConditional")){
 			return ifEnd();
+		}else if(cur.equals("else")){
+			return elseBlock();
 		}
 		System.out.println(loc);
 		throw new IllegalArgumentException("The code generator did not know what to do when it encountered the token: " + cur);
@@ -474,6 +476,19 @@ public class generator{
 		String builder = tabs();
 		builder = builder.concat("}");
 		loc+=2;
+		return builder;
+	}
+	
+	/**
+	*An else block
+	*@return, the else statement
+	*/
+	private String elseBlock(){
+		tabCount--;
+		String builder = tabs();
+		builder = builder.concat("}else{");
+		tabCount++;
+		loc +=2;
 		return builder;
 	}
 	
