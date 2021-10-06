@@ -362,6 +362,24 @@ public class generator{
 			}else if(tokens.get(loc).equals("deccrement")){//deccrement
 				builder = builder.concat("--");
 				loc++;
+			}else if(tokens.get(loc).equals("equals")){
+				builder = builder.concat(" == ");
+				loc++;
+			}else if(tokens.get(loc).equals("notEqual")){
+				builder = builder.concat(" != ");
+				loc++;
+			}else if(tokens.get(loc).equals("greaterThan")){
+				builder = builder.concat(" > ");
+				loc++;
+			}else if(tokens.get(loc).equals("lessThan")){
+				builder = builder.concat(" < ");
+				loc++;
+			}else if(tokens.get(loc).equals("greaterThanOrEqual")){
+				builder = builder.concat(" >= ");
+				loc++;
+			}else if(tokens.get(loc).equals("lessThanOrEqual")){
+				builder = builder.concat(" <= ");
+				loc++;
 			}else{
 				break; //unsure of what to do here, so breaking loop
 			}
@@ -433,6 +451,9 @@ public class generator{
 				}else{
 					builder = builder.concat(" || ");
 				}
+			}else if(tokens.get(loc).equals("double") || tokens.get(loc).equals("numType")){
+				builder = builder.concat(numStatement());
+				loc--;
 			}else{
 				throw new IllegalArgumentException("Unsure of how to handle the token: " + tokens.get(loc) + " in a boolean statement");
 			}
@@ -543,6 +564,8 @@ public class generator{
 		loc += 2;
 		return builder;
 	}
+	
+	
 }
 
 
