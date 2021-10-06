@@ -63,7 +63,7 @@ FullType : varType Type | varType asignDec | varType asignBool
 // varType is a collection of terminal symbols, I don't like it but it should work
 // this is all of the variable names, asigned to their types
 varType : strType | boolType | numType | charType | strArrayType | numArrayType | boolArrayType
-asignDec : Asign matchedLit | asignDec BackEnd | PrefixAsignment IV 
+asignDec : Asign matchedLit | asignDec BackEnd | PrefixAsignment IV
 // Used for prefix things, made to make this happier
 PrefixAsignment : Asign PV
 //
@@ -124,7 +124,7 @@ Nb : Not BoolValue | bool True | bool False | bool Null | boolType
 BeginBoolStatement : Nb And | Nb Or
 FullBoolStatement : BeginBoolStatement Nb | FullBoolStatement BoolBack | FullBeginXOR Nb
 BoolBack : And Nb | Or Nb
-BoolValue : bool True | bool False | bool Null | boolType
+BoolValue : bool True | bool False | bool Null | boolType | bool FullNumBool | BeginNumBool Value
 And : and
 Or : or
 Not : not
@@ -163,5 +163,9 @@ FullCase : caseStart CasePunc | DefaultCase Punc
 SwitchClose : switchClose
 DefaultCase : defaultCase
 InnerCase : SwitchClose Punc | GeneralLine InnerCase | FullCase InnerCase
-
-// need to implement in main call of generalline
+//
+// Comparisons
+//
+NumBools : equals | greaterThan | lessThan | notEqual | greaterThanOrEqual | lessThanOrEqual
+BeginNumBool : Value NumBools
+FullNumBool : BeginNumBool Value
