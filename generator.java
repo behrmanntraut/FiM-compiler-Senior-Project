@@ -15,6 +15,7 @@ public class generator{
 	private int varCount=0;//current location in ST
 	private int loc=0;//current token we are at
 	private String ReportName = "";
+	Boolean firstCase=false;
 	
 	/**
 	*Class constructor
@@ -85,8 +86,14 @@ public class generator{
 			return ifEnd();
 		}else if(cur.equals("else")){
 			return elseBlock();
+		}else if(cur.equals("switch")){
+			return switchBlock();
+		}else if(cur.equals("case") || cur.equals("defaultCase")){
+			return caseBlock();
+		}else if(cur.equals("switchClose")){
+			return switchClose();
 		}
-		System.out.println(loc);
+		System.out.println("Token location: " + loc);
 		throw new IllegalArgumentException("The code generator did not know what to do when it encountered the token: " + cur);
 	}
 	
@@ -492,7 +499,50 @@ public class generator{
 		return builder;
 	}
 	
+	/**
+	*The switch statement
+	*@return String the switch statement
+	*/
+	private String switchBlock(){
+		String builder = tabs();
+		tabCount++;
+		builder = builder.concat("switch ((int) " + symbols.get(varCount) + ") {");
+		loc += 3;
+		varCount++;
+		firstCase=true;
+		return builder;
+	}
 	
+	/**
+	*Returns this case block
+	*@return String the case block
+	*/
+	private String caseBlock(){
+		tabCount--;
+		String builder = tabs();
+		tabCount++;
+		if(tokens.get(loc).equals("defaultCase")){
+			builder = builder.concat("default:");
+			loc += 2;
+		}else{
+			builder = builder.concat("case (int) " + symbols.get(varCount) + ":");
+			loc += 4;
+			varCount++;
+		}
+		return builder;
+	}
+	
+	/**
+	*Closes the swithc statement
+	*@return String the end of a switch statement
+	*/
+	private String switchClose(){
+		tabCount--;
+		String builder = tabs();
+		builder = builder.concat("}");
+		loc += 2;
+		return builder;
+	}
 }
 
 
