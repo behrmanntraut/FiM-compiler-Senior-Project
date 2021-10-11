@@ -7,7 +7,7 @@ M : Manestart X
 X : Q ManeEnd
 Q : GeneralLine Q | endMainfunc 
 // A structure to store any general line
-GeneralLine : n | decType Punc | asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix | FullIncrement Punc | FullAsignBool Punc | CompleteIfLine QQ | ToPrint Punc | BSP InnerCase
+GeneralLine : n | decType Punc | asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix | FullIncrement Punc | FullAsignBool Punc | CompleteIfLine QQ | ToPrint Punc | BSP InnerCase | FullFor InnerFor
 //
 // opening the file
 //
@@ -88,7 +88,7 @@ StrLit : strLit
 // Infix operators
 FullInfix : FullInfix BackEnd | BeginOp Value
 BeginOp : Value Op
-Value : numType | Double DubLit | NumType Inc | NumType Dec
+Value : numType | Double DubLit | NumType Inc | NumType Dec | dubLit
 Op : addInfix | subInfix | multInfix | divInfix
 BackEnd : Op Value
 //
@@ -169,3 +169,18 @@ InnerCase : SwitchClose Punc | GeneralLine InnerCase | FullCase InnerCase
 NumBools : equals | greaterThan | lessThan | notEqual | greaterThanOrEqual | lessThanOrEqual
 BeginNumBool : Value NumBools
 FullNumBool : BeginNumBool Value
+//
+// For loops
+//
+For : for
+Setfor : subInfix2
+SetMaxInFor : setMaxInFor
+newVarType : Double NumType | Char CharType
+forType : For newVarType
+intFor : forType Setfor
+NumSet : Value SetMaxInFor | CharLit SetMaxInFor | FullInfix SetMaxInFor | FullPrefix SetMaxInFor
+numMax : NumSet Value | NumSet CharLit | NumSet FullInfix | NumSet FullPrefix
+numFor : intFor numMax
+FullFor : numFor Punc
+CharType : charType
+InnerFor : GeneralLine InnerFor | SwitchClose Punc
