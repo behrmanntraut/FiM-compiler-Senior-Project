@@ -227,17 +227,17 @@ public class token{
 			keys.put("weregreaterthan","greaterThan");
 			keys.put("weremorethan","greaterThan");
 			//greater than or equal to
-			keys.put("had no less than","greaterThanOrEqual");
-			keys.put("has no less than","greaterThanOrEqual");
-			keys.put("is no less than","greaterThanOrEqual");
-			keys.put("is not less than","greaterThanOrEqual");
-			keys.put("isn't less than","greaterThanOrEqual");
-			keys.put("was no less than","greaterThanOrEqual");
-			keys.put("was not less than","greaterThanOrEqual");
-			keys.put("wasn't less than","greaterThanOrEqual");
-			keys.put("were no less than","greaterThanOrEqual");
-			keys.put("were not less than","greaterThanOrEqual");
-			keys.put("weren't less than","greaterThanOrEqual");
+			keys.put("hadnolessthan","greaterThanOrEqual");
+			keys.put("hasnolessthan","greaterThanOrEqual");
+			keys.put("isnolessthan","greaterThanOrEqual");
+			keys.put("isnotlessthan","greaterThanOrEqual");
+			keys.put("isn'tlessthan","greaterThanOrEqual");
+			keys.put("wasnolessthan","greaterThanOrEqual");
+			keys.put("wasnotlessthan","greaterThanOrEqual");
+			keys.put("wasn'tlessthan","greaterThanOrEqual");
+			keys.put("werenolessthan","greaterThanOrEqual");
+			keys.put("werenotlessthan","greaterThanOrEqual");
+			keys.put("weren'tlessthan","greaterThanOrEqual");
 			//less than
 			keys.put("hadlessthan","lessThan");
 			keys.put("haslessthan","lessThan");
@@ -245,26 +245,32 @@ public class token{
 			keys.put("waslessthan","lessThan");
 			keys.put("werelessthan","lessThan");
 			//less than or equal to : there are 19 of these...
-			keys.put("had no more than","lessThanOrEqual");
-			keys.put("has no more than","lessThanOrEqual");
-			keys.put("is no greater than","lessThanOrEqual");
-			keys.put("is no more than","lessThanOrEqual");
-			keys.put("is not greater than","lessThanOrEqual");
-			keys.put("is not more than","lessThanOrEqual");
-			keys.put("isn't greater than","lessThanOrEqual");
-			keys.put("isn't more than","lessThanOrEqual");
-			keys.put("was no greater than","lessThanOrEqual");
-			keys.put("was no more than","lessThanOrEqual");
-			keys.put("was not greater than","lessThanOrEqual");
-			keys.put("was not more than","lessThanOrEqual");
-			keys.put("wasn't greater than","lessThanOrEqual");
-			keys.put("wasn't more than","lessThanOrEqual");
-			keys.put("were no greater than","lessThanOrEqual");
-			keys.put("were no more than","lessThanOrEqual");
-			keys.put("were not greater than","lessThanOrEqual");
-			keys.put("were not more than","lessThanOrEqual");
-			keys.put("weren't greater than","lessThanOrEqual");
-			keys.put("weren't more than","lessThanOrEqual");
+			keys.put("hadnomorethan","lessThanOrEqual");
+			keys.put("hasnomorethan","lessThanOrEqual");
+			keys.put("isnogreaterthan","lessThanOrEqual");
+			keys.put("isnomorethan","lessThanOrEqual");
+			keys.put("isnotgreaterthan","lessThanOrEqual");
+			keys.put("isnotmorethan","lessThanOrEqual");
+			keys.put("isn'tgreaterthan","lessThanOrEqual");
+			keys.put("isn'tmorethan","lessThanOrEqual");
+			keys.put("wasnogreaterthan","lessThanOrEqual");
+			keys.put("wasnomorethan","lessThanOrEqual");
+			keys.put("wasnotgreaterthan","lessThanOrEqual");
+			keys.put("wasnotmorethan","lessThanOrEqual");
+			keys.put("wasn'tgreaterthan","lessThanOrEqual");
+			keys.put("wasn'tmorethan","lessThanOrEqual");
+			keys.put("werenogreaterthan","lessThanOrEqual");
+			keys.put("werenomorethan","lessThanOrEqual");
+			keys.put("werenotgreaterthan","lessThanOrEqual");
+			keys.put("werenotmorethan","lessThanOrEqual");
+			keys.put("weren'tgreaterthan","lessThanOrEqual");
+			keys.put("weren'tmorethan","lessThanOrEqual");
+		//for loops
+		keys.put("Forevery","for");
+		keys.put("to","setMaxInFor");
+		keys.put("from","subInfix2");//bad solution... hopefully this doesn;t break things
+		keys.put("in","forEach");
+		
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
 	}
@@ -573,12 +579,16 @@ public class token{
 		Boolean specialCase=false;
 		Boolean stringsPresent=false;
 		Boolean lookingForInfix=false;
+		Boolean varNameInForLoop=false;
 		for(int start=0;start<line.length;start++){//each start word
 			for(int len=line.length;len>=0;len--){//each length
 				if(start+len>line.length){
 					continue;
 				}
 				String cur = build(line,start,len);
+				//System.out.println(cur);
+				//System.out.println(varLoc + "\t" + varEnd);
+				//System.out.println(symbolTable);
 				if(lookingForInfix && isInfix(cur)){
 					String infixType = getInfixType(thisLinesTokens, cur);
 					thisLinesTokens.add(infixType);
@@ -609,10 +619,11 @@ public class token{
 					if(symbolTable.contains(cur)){
 						symbolTable.add(cur);
 					}
-					if(specialKeyword(keys.get(cur))){//next position starts a user defined name
+					if(specialKeyword(keys.get(cur)) || varNameInForLoop){//next position starts a user defined name
 						varLoc.add(start);
 						lookForEnd=true;
 						tokenPos.add(thisLinesTokens.size());
+						varNameInForLoop=false;
 					}else if(isOtherSpecialKeyword(keys.get(cur))){//the position after the next position starts a user defined name
 						varLoc.add(start+1);
 						lookForEnd=true;
@@ -621,6 +632,8 @@ public class token{
 					}else if(isPrefix(cur)){
 						//need to look for the special infix item
 						lookingForInfix=true;
+					}else if(keys.get(cur).equals("for")){
+						varNameInForLoop=true;
 					}
 					start--;
 					break;
@@ -855,6 +868,14 @@ public class token{
 				keys.put(allVars.get(var),"manemethod");
 			}else if(tokens.get(lookAt)=="varDec"){
 				String thisType = getBasicType(tokens,lookAt+1);
+				types.add(thisType);
+				keys.put(allVars.get(var),thisType);
+			}else if(tokens.get(lookAt)=="double"){
+				String thisType = getBasicType(tokens,lookAt);
+				types.add(thisType);
+				keys.put(allVars.get(var),thisType);
+			}else if(tokens.get(lookAt)=="char"){
+				String thisType = getBasicType(tokens,lookAt);
 				types.add(thisType);
 				keys.put(allVars.get(var),thisType);
 			}else{
