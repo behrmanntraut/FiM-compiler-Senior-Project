@@ -564,6 +564,7 @@ public class token{
 		}
 	}
 	
+	ArrayList<Integer> tokenPos = new ArrayList<Integer>();
 	/**
 	*A breakdown of run that tokenizes a single line - void as all needed things to write to are already global variables
 	*@param line, the String[] that makes up the line
@@ -574,7 +575,8 @@ public class token{
 		ArrayList<Integer> varLocStr = new ArrayList<Integer>();
 		ArrayList<Integer> varEndStr = new ArrayList<Integer>();
 		ArrayList<Integer> varEnd = new ArrayList<Integer>();
-		ArrayList<Integer> tokenPos = new ArrayList<Integer>();
+		tokenPos = new ArrayList<Integer>();
+		LineVars vars = new LineVars();
 		Boolean lookForEnd=false;
 		Boolean specialCase=false;
 		Boolean stringsPresent=false;
@@ -617,18 +619,22 @@ public class token{
 					}
 					start+=len;
 					if(symbolTable.contains(cur)){
-						symbolTable.add(cur);
+						vars.add(cur);
+						//symbolTable.add(cur);
+						//System.out.println("Adding to symbol table: " + cur);
 					}
 					if(specialKeyword(keys.get(cur)) || varNameInForLoop){//next position starts a user defined name
 						varLoc.add(start);
 						lookForEnd=true;
 						tokenPos.add(thisLinesTokens.size());
 						varNameInForLoop=false;
+						vars.addBlank();
 					}else if(isOtherSpecialKeyword(keys.get(cur))){//the position after the next position starts a user defined name
 						varLoc.add(start+1);
 						lookForEnd=true;
 						specialCase=true;
 						tokenPos.add(thisLinesTokens.size()+1);
+						vars.addBlank();
 					}else if(isPrefix(cur)){
 						//need to look for the special infix item
 						lookingForInfix=true;
@@ -655,6 +661,7 @@ public class token{
 					}else{
 					varLoc.add(start);
 					varEnd.add(start+len-1);
+					vars.addBlank();
 					}
 					start += len;
 					start--;
@@ -666,14 +673,17 @@ public class token{
 				varEnd.add(varLoc.get(varLoc.size()-1));
 			}
 			ArrayList<String> allVars = getVars(varLoc,varEnd,line);
+			System.out.println(allVars);
 			if(stringsPresent){
 				ArrayList<String> strVars = getStrVars(varLocStr, varEndStr, line);
 				//need to shuffle into proper place in symbol table
 				ArrayList<String> newVars = mergeStrWithVars(strVars,allVars,tokenPos,thisLinesTokens);
-				symbolTable.addAll(newVars);
+				vars.merge(newVars);
+				symbolTable.addAll(vars.getVars());
 				stringsPresent=false;
 			}else{
-				symbolTable.addAll(allVars);
+				vars.merge(allVars);
+				symbolTable.addAll(vars.getVars());
 			}
 			ArrayList<String> types = findTypes(tokenPos,thisLinesTokens, allVars);
 			thisLinesTokens = mergeTokens(thisLinesTokens,types,tokenPos);
@@ -843,6 +853,7 @@ public class token{
 		//take each position and look at the previous token type, if punc then look back one more time
 		int var=0;
 		ArrayList<String> types = new ArrayList<String>();
+		ArrayList<Integer> removes = new ArrayList<Integer>();
 		for(int i=0;i<positions.size();i++){
 			int lookAt=0;
 			if(tokens.get(positions.get(i)-1)=="punc"){
