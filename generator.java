@@ -92,6 +92,8 @@ public class generator{
 			return caseBlock();
 		}else if(cur.equals("switchClose")){
 			return switchClose();
+		}else if(cur.equals("for")){
+			return For();
 		}
 		System.out.println("Token location: " + loc);
 		throw new IllegalArgumentException("The code generator did not know what to do when it encountered the token: " + cur);
@@ -562,6 +564,57 @@ public class generator{
 		String builder = tabs();
 		builder = builder.concat("}");
 		loc += 2;
+		return builder;
+	}
+	
+	/**
+	*Returns the begining of a for or foreach loop
+	*@return String the for loop
+	*/
+	private String For(){
+		String builder = tabs();
+		builder = builder.concat("for(");
+		loc++;
+		String varName = "";
+		if(tokens.get(loc).equals("double")){
+			builder = builder.concat("double ");
+			loc++;
+		}else if(tokens.get(loc).equals("string")){
+			builder = builder.concat("String ");
+			loc++;
+		}else if(tokens.get(loc).equals("Bool")){
+			builder = builder.concat("Boolean ");
+			loc++;
+		}else if(tokens.get(loc).equals("char")){
+			builder = builder.concat("char ");
+			loc++;
+		}else{
+			throw new IllegalArgumentException("Was expecting Bool, Char, Sitrng, or Double, but recieved: " + tokens.get(loc));
+		}
+		builder = builder.concat(symbols.get(varCount));
+		varName = symbols.get(varCount);
+		System.out.println(varCount);
+		loc++;
+		varCount++;
+		if(tokens.get(loc).equals("forEach")){ //for each loop
+			builder = builder.concat(" : ");
+			builder = builder.concat(symbols.get(varCount) + "){");
+			varCount++;
+			loc+=3;
+		}else{//standard for loop
+			builder = builder.concat("=");
+			loc++;
+			if(tokens.get(loc).equals("charLit")){
+				builder = builder.concat(symbols.get(varCount));
+				varCount++;
+				loc++;
+				builder = builder.concat("; " + varName + " <= " + symbols.get(varCount) + "; " + varName + "++");
+			}else{//numbers
+				
+			}
+			builder = builder.concat("){");
+		}
+		tabCount++;
 		return builder;
 	}
 	
