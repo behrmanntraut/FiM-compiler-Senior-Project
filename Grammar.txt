@@ -180,7 +180,27 @@ forType : For newVarType
 intFor : forType Setfor
 NumSet : Value SetMaxInFor | CharLit SetMaxInFor | FullInfix SetMaxInFor | FullPrefix SetMaxInFor
 numMax : NumSet Value | NumSet CharLit | NumSet FullInfix | NumSet FullPrefix
-numFor : intFor numMax
+numFor : intFor numMax | FNumI NumArrayType | FBoolI BoolArrayType | FCharI CharArrayType | FStrI StrArrayType
 FullFor : numFor Punc
 CharType : charType
 InnerFor : GeneralLine InnerFor | SwitchClose Punc
+//
+// for each loops
+//
+newNumVar : Double NumType
+newCharVar : Char CharType
+newBoolVar : Bool BoolType
+newStrType : String strType
+FNum : For newNumVar
+FChar : For newCharVar
+FBool : For newBoolVar
+FStr : For newStrVar
+FNumI : FNum ForEach
+FCharI : FChar ForEach
+FBoolI : FBool ForEach
+FStrI : FStr ForEach
+NumArrayType : numArrayType
+CharArrayType : charArrayType
+StrArrayType : strArrayType
+BoolArrayType : boolArrayType
+ForEach : forEach
