@@ -282,7 +282,7 @@ public class generator{
 		}else if(token.equals("strArrayType")){
 			return "String[]";
 		}else if(token.equals("numArrayType")){
-			return "doulbe[]";
+			return "double[]";
 		}else if(token.equals("boolArrayType")){
 			return "Boolean[]";
 		}else{
@@ -381,6 +381,10 @@ public class generator{
 				loc++;
 			}else if(tokens.get(loc).equals("lessThanOrEqual")){
 				builder = builder.concat(" <= ");
+				loc++;
+			}else if(tokens.get(loc).equals("dubLit")){
+				builder = builder.concat(symbols.get(varCount));
+				varCount++;
 				loc++;
 			}else{
 				break; //unsure of what to do here, so breaking loop
@@ -593,7 +597,6 @@ public class generator{
 		}
 		builder = builder.concat(symbols.get(varCount));
 		varName = symbols.get(varCount);
-		System.out.println(varCount);
 		loc++;
 		varCount++;
 		if(tokens.get(loc).equals("forEach")){ //for each loop
@@ -609,8 +612,14 @@ public class generator{
 				varCount++;
 				loc++;
 				builder = builder.concat("; " + varName + " <= " + symbols.get(varCount) + "; " + varName + "++");
+				loc+=3;
 			}else{//numbers
-				
+				builder = builder.concat(numStatement());
+				builder = builder.concat("; " + varName + " <= ");
+				loc++;
+				builder = builder.concat(numStatement());
+				builder = builder.concat("; " + varName + "++");
+				loc++;
 			}
 			builder = builder.concat("){");
 		}
