@@ -270,7 +270,15 @@ public class token{
 		keys.put("to","setMaxInFor");
 		keys.put("from","subInfix2");//bad solution... hopefully this doesn;t break things
 		keys.put("in","forEach");
-		
+		//methods
+		keys.put("as","param");
+		keys.put("with","returnType");
+		keys.put("toget","returnType");
+		keys.put("using","param");
+		keys.put("Ilearned","Para");
+		keys.put("Thenyouget","return");
+		keys.put("Iremembered","callPara");
+		keys.put("Iwould","callPara");
 		// N is being used for new line, since I am removing it in the process it will be added in automatically at the end of each line
 	
 	}
@@ -285,7 +293,9 @@ public class token{
 		
 		Boolean varComing = false;
 		//going to do the first line in its own function because it is weird
-		
+		for(int i=1;i<line.size();i++){
+			findMethods(line.get(i));
+		}
 		firstLine(line.get(0));
 		tokens.add("n");
 		for(int l=1;l<line.size();l++){//for each line
@@ -658,6 +668,7 @@ public class token{
 						stringsPresent=true;
 						varLocStr.add(start);
 						varEndStr.add(start+len-1);
+						vars.addBlank();
 					}else{
 					varLoc.add(start);
 					varEnd.add(start+len-1);
@@ -673,7 +684,7 @@ public class token{
 				varEnd.add(varLoc.get(varLoc.size()-1));
 			}
 			ArrayList<String> allVars = getVars(varLoc,varEnd,line);
-			System.out.println(allVars);
+			//System.out.println(allVars);
 			if(stringsPresent){
 				ArrayList<String> strVars = getStrVars(varLocStr, varEndStr, line);
 				//need to shuffle into proper place in symbol table
@@ -687,6 +698,8 @@ public class token{
 			}
 			ArrayList<String> types = findTypes(tokenPos,thisLinesTokens, allVars);
 			thisLinesTokens = mergeTokens(thisLinesTokens,types,tokenPos);
+		}else if(!vars.isEmpty()){
+			symbolTable.addAll(vars.getVars());
 		}
 		tokens.addAll(thisLinesTokens);
 		
@@ -998,6 +1011,30 @@ public class token{
 			
 		}
 		return null;
+	}
+	
+	private void findMethods(String[] line){
+		if(line.length<3){
+			//not declaring a paragraph here
+		}else{
+			if(line[0].equals("I") && line[1].equals("learned")){
+				//I know a method is being declared on this line
+				String builder = "";
+				for(int i=2;i<line.length;i++){
+					if(!isKeyword(line[i])){
+						builder = builder.concat(line[i]);
+					}else{//variable name is done
+						if(builder.isEmpty()){
+							throw new IllegalArgumentException("No variable name detected for a paragraph");
+						}
+						Method method = new Method(builder);
+						//need to look for parameters and return types
+						
+						
+					}
+				}
+			}
+		}
 	}
 	
 	
