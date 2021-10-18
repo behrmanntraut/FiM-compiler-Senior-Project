@@ -319,7 +319,7 @@ public class generator{
 		String builder = "";
 		while(!tokens.get(loc).equals("punc")){
 			if(tokens.get(loc).equals("double")){//a literal value
-				builder=builder.concat(symbols.get(varCount));
+				builder=builder.concat("(int) " + symbols.get(varCount));
 				loc+=2;
 				varCount++;
 			}else if(tokens.get(loc).equals("addInfix")){//+
@@ -383,7 +383,7 @@ public class generator{
 				builder = builder.concat(" <= ");
 				loc++;
 			}else if(tokens.get(loc).equals("dubLit")){
-				builder = builder.concat(symbols.get(varCount));
+				builder = builder.concat("(int) " + symbols.get(varCount));
 				varCount++;
 				loc++;
 			}else{
@@ -581,7 +581,7 @@ public class generator{
 		loc++;
 		String varName = "";
 		if(tokens.get(loc).equals("double")){
-			builder = builder.concat("double ");
+			builder = builder.concat("int ");
 			loc++;
 		}else if(tokens.get(loc).equals("string")){
 			builder = builder.concat("String ");

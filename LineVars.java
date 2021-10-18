@@ -11,7 +11,7 @@ public class LineVars{
 		temp.addBlank();
 		temp.add("var2");
 		temp.addNext("var1");
-		System.out.println(temp.getVars());
+		//System.out.println(temp.getVars());
 	}
 	
 	/**
@@ -34,6 +34,7 @@ public class LineVars{
 	*/
 	public void add(String var){
 		vars.add(var);
+		//print();
 	}
 	
 	/**
@@ -47,6 +48,7 @@ public class LineVars{
 				break;
 			}
 		}
+		//print();
 	}
 	
 	/**
@@ -54,6 +56,8 @@ public class LineVars{
 	*@return ArrayList<String> the stored variables
 	*/
 	public ArrayList<String> getVars(){
+		//System.out.println("returning vars: ");
+		//print();
 		return vars;
 	}
 	
@@ -64,6 +68,27 @@ public class LineVars{
 	public void merge(ArrayList<String> other){
 		for(String o : other){
 			this.addNext(o);
+		}
+		//System.out.println("Running merge: ");
+		//print();
+	}
+	
+	/**
+	*Prints the arraylist above
+	*/
+	public void print(){
+		System.out.println(vars);
+	}
+	
+	/**
+	*Returns true if there are no vars stored
+	*@return Boolean true if there are no vars stored
+	*/
+	public Boolean isEmpty(){
+		if(vars.size()==0){
+			return true;
+		}else{
+			return false;
 		}
 	}
 	
