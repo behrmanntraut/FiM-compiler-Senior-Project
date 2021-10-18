@@ -15,6 +15,7 @@ public class token{
 	private HashMap<String,String> keys = new HashMap<String,String>();//find the keywords
 	private ArrayList<String> symbolTable = new ArrayList<String>();
 	private ArrayList<String> tokens = new ArrayList<String>();
+	private ArrayList<Method> methods = new ArrayList<Method>();
 	/**
 	*Class constructor
 	*@param FIM the file that is to be read
@@ -295,6 +296,10 @@ public class token{
 		//going to do the first line in its own function because it is weird
 		for(int i=1;i<line.size();i++){
 			findMethods(line.get(i));
+		}
+		for(Method m : methods){
+			keys.put(m.getName(),m.getReturnType());
+			keys.putAll(m.getVarMapping());
 		}
 		firstLine(line.get(0));
 		tokens.add("n");
@@ -1013,13 +1018,19 @@ public class token{
 		return null;
 	}
 	
+	/**
+	*Finds all of the methods defined in the program
+	*@param line the line to check if it declares a method
+	*/
 	private void findMethods(String[] line){
+		int endName =0;
 		if(line.length<3){
 			//not declaring a paragraph here
 		}else{
 			if(line[0].equals("I") && line[1].equals("learned")){
 				//I know a method is being declared on this line
 				String builder = "";
+				Method method = new Method("YOU SHOULD NEVER SEE THIS METHOD NAME");
 				for(int i=2;i<line.length;i++){
 					if(!isKeyword(line[i])){
 						builder = builder.concat(line[i]);
@@ -1027,13 +1038,115 @@ public class token{
 						if(builder.isEmpty()){
 							throw new IllegalArgumentException("No variable name detected for a paragraph");
 						}
-						Method method = new Method(builder);
+						method = new Method(builder);
 						//need to look for parameters and return types
-						
+						endName=i;
+						break;
 						
 					}
 				}
+				
+				if(endName==line.length){
+					//all done do nothing more
+				}else{//more tokens to parse
+					Boolean returns = false;
+					Boolean params = false;
+					for(int start=endName;start<line.length;start++){
+						if(line[start].equals("using") || line[start].equals("as")){
+							params=true;
+							continue;
+						}else if(line[start].equals("with")){
+							params=false;
+							returns=true;
+							continue;
+						}else{
+							if(start+1<line.length && line[start].equals("to") && line[start+1].equals("get")){
+								params=false;
+								returns=true;
+								start++;//needed so that the type doesn't have the word get in it
+								continue;
+							}
+						}
+						if(params){//need to look for type and variable name
+							String cur = "";
+							String type = "";
+							int len=0;
+							for(int l=0;l<line.length-start;l++){//first type
+								cur = cur.concat(line[start+l]);
+								if(isKeyword(cur)){//a keyword was found, assuming to be the type of the incoming parameter
+									type = keys.get(cur);
+									start+=l+1;
+									break;
+								}
+							}
+							cur="";
+							for(int l=0;l<line.length-start-1;l++){//look for the variable name now
+								//this is a subpar implementation of the varaible finding system I am using in other places, an ideal system would seperate that system and use it here but its too entrenched
+								cur = cur.concat(line[start+l]);
+								if(isKeyword(line[start+l+1])){
+									start+=l;
+									method.addParam(type,cur);
+									break;
+								}else if(start+l+2<line.length){
+									if(isKeyword("" + line[start+l+1] + line[start+l+2])){
+										start+=l;
+										method.addParam(type,cur);
+										break;
+									}
+								}
+							}
+							
+						}else if(returns){
+							String cur = "";
+							String thisReturnType = "";
+							for(int i=start;i<line.length;i++){
+								cur = cur.concat(line[i]);
+								if(isKeyword(cur)){
+									thisReturnType = keys.get(cur);
+									start+=i;
+									break;
+								}
+							}
+							if(thisReturnType.isEmpty()){
+								//return type void, can ignore since voidType is default
+							}else{
+								method.setReturnType(translateType(thisReturnType));
+							}
+							returns=false;
+						}else{
+							//?
+							
+						}
+					}
+				}
+				methods.add(method);
 			}
+			
+		}
+	}
+	
+	/**
+	*Translates all nums to returnsNumType etc...
+	*@param String type the type to convert
+	*@return String the translated type
+	*/
+	private String translateType(String type){
+		if(type.equals("double")){
+			return "returnsNumType";
+		}else if(type.equals("char")){
+			return "returnsCharType";
+		}else if(type.equals("Bool")){
+			return "returnsBoolType";
+		}else if(type.equals("string")){
+			return "returnsStrType";
+		}else if(type.equals("boolArray")){
+			return "returnsBoolArrayType";
+		}else if(type.equals("strArray")){
+			return "returnsStrArrayType";
+		}else if(type.equals("numArray")){
+			return "returnsNumArrayType";
+		}else{
+			throw new IllegalArgumentException("In the current version returning a " + type + " is not supported");
 		}
 	}
 	

@@ -2,7 +2,7 @@
 *A representation of a method, holds a bunch of data
 *@author Brandon Ehrmanntraut
 */
-import java.util.ArrayList;
+import java.util.*;
 public class Method{
 	private ArrayList<String> params = new ArrayList<String>();
 	private ArrayList<String> containedVars = new ArrayList<String>();
@@ -15,16 +15,16 @@ public class Method{
 	*/
 	public Method(String name){
 		this.name = name;
-		returnType = "";
+		returnType = "voidType";
 	}
 	
 	/**
 	*Adds a paramater to the method
 	*@param type the type of the variable
-	*@param name
+	*@param name the name of the variable
 	*/
 	public void addParam(String type, String name){
-		containedVars.add(type);
+		containedVars.add(name);
 		params.add(type);
 	}
 	
@@ -120,5 +120,36 @@ public class Method{
 		return other.getName().equals(this.getName());
 	}
 	
-
+	/**
+	*A toStirng method
+	*@return String the string of this object
+	*/
+	@Override
+	public String toString(){
+		String builder = "{ Name: " + name;
+		builder = builder.concat(" Parameters: " + params);
+		builder = builder.concat(" Contains: " + containedVars);
+		builder = builder.concat(" Return Type: " + returnType + " } ");
+		return builder;
+	}
+	
+	/**
+	*Returns a hashmap of all of the params mapped to their types
+	*@return HashMap the params mapped to their types
+	*/
+	public HashMap<String,String> getVarMapping(){
+		HashMap<String,String> temp = new HashMap<String,String>();
+		for(int i=0;i<params.size();i++){
+			temp.put(containedVars.get(i),params.get(i));
+		}
+		return temp;
+	}
+	
+	public static void main(String[] args){
+		Method method = new Method("HelloWorld");
+		method.addParam("numType","myNum");
+		System.out.println(method);
+	}
+	
+	
 }
