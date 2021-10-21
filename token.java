@@ -276,7 +276,7 @@ public class token{
 		keys.put("with","returnType");
 		keys.put("toget","returnType");
 		keys.put("using","param");
-		keys.put("Ilearned","Para");
+		keys.put("Ilearned","para");
 		keys.put("Thenyouget","return");
 		keys.put("Iremembered","callPara");
 		keys.put("Iwould","callPara");
@@ -1145,6 +1145,8 @@ public class token{
 			return "returnsStrArrayType";
 		}else if(type.equals("numArray")){
 			return "returnsNumArrayType";
+		}else if(type.equals("charArray")){
+			return "returnsCharArrayType";
 		}else{
 			throw new IllegalArgumentException("In the current version returning a " + type + " is not supported");
 		}
