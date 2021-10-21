@@ -41,7 +41,7 @@ Signee : signee
 // print statements - to be updated in milestone 3
 //
 Print : print
-Tempstr : strLit | string | true | false | boolType | numType | charLit | charType | dubLit | Tempstr BackEnd | BeginOp Value | PV IV | NumType Inc | NumType Dec | returnsStrType
+Tempstr : strLit | string | true | false | boolType | numType | charLit | charType | dubLit | Tempstr BackEnd | BeginOp Value | PV IV | NumType Inc | NumType Dec | StrType
 ToPrint : Print Tempstr
 Fullprint : ToPrint Punc
 //
@@ -68,8 +68,8 @@ asignDec : Asign matchedLit | asignDec BackEnd | PrefixAsignment IV
 PrefixAsignment : Asign PV
 //
 asignBool : Asign BoolValue | Asign FullBoolStatement
-Type : Bool | double | char | string | boolArray | strArray | numArray | returnsCharType | returnsNumType | returnsBoolType | returnsStrType
-matchedLit : Bool true | Bool false | Bool null | Double Null | Double DubLit | Char Null | Char CharLit | String StrLit | String Null | returnsCharType | returnsNumType | returnsBoolType | returnsStrType
+Type : Bool | double | char | string | boolArray | strArray | numArray
+matchedLit : Bool true | Bool false | Bool null | Double Null | Double DubLit | Char Null | Char CharLit | String StrLit | String Null
 Null : null
 Double : double
 Char : char
@@ -106,7 +106,7 @@ BP : BackEnd Punc | BackEnd BP
 //
 Fan : asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix
 asignNum : NumType Asign
-NumType : numType | returnsNumType
+NumType : numType | Call ReturnsNum
 FinishAsignNum : FullInfix Punc
 numTypePunc : numType punc | FullIncrement Punc
 VP : Value Punc
@@ -124,7 +124,7 @@ Nb : Not BoolValue | bool True | bool False | bool Null | boolType | Not FullNum
 BeginBoolStatement : Nb And | Nb Or | Nb Equals
 FullBoolStatement : BeginBoolStatement Nb | FullBoolStatement BoolBack | FullBeginXOR Nb
 BoolBack : And Nb | Or Nb
-BoolValue : bool True | bool False | bool Null | boolType | bool FullNumBool | BeginNumBool Value | returnsBoolType
+BoolValue : bool True | bool False | bool Null | boolType | bool FullNumBool | BeginNumBool Value | boolType | Call ReturnsBool
 And : and
 Or : or
 Not : not
@@ -134,7 +134,7 @@ FullBeginXOR : BeginXOR Or
 //
 // asigning a boolean
 //
-BoolType : boolType
+BoolType : boolType | Call ReturnsBool
 FullAsignBool : BoolType asignBool
 AsignBoolLine : FullAsignBool Punc
 //
@@ -182,7 +182,7 @@ NumSet : Value SetMaxInFor | CharLit SetMaxInFor | FullInfix SetMaxInFor | FullP
 numMax : NumSet Value | NumSet CharLit | NumSet FullInfix | NumSet FullPrefix
 numFor : intFor numMax | FNumI NumArrayType | FBoolI BoolArrayType | FCharI CharArrayType | FStrI StrArrayType
 FullFor : numFor Punc
-CharType : charType
+CharType : charType | Call ReturnsChar
 InnerFor : GeneralLine InnerFor | SwitchClose Punc
 //
 // for each loops
@@ -199,10 +199,10 @@ FNumI : FNum ForEach
 FCharI : FChar ForEach
 FBoolI : FBool ForEach
 FStrI : FStr ForEach
-NumArrayType : numArrayType | returnsNumArrayType
-CharArrayType : charArrayType | returnsCharArrayType
-StrArrayType : strArrayType | returnsStrArrayType
-BoolArrayType : boolArrayType | returnsBoolArrayType
+NumArrayType : numArrayType | Call ReturnsNumArrayType
+CharArrayType : charArrayType | Call ReturnsCharArrayType
+StrArrayType : strArrayType | Call ReturnsStrArrayType
+BoolArrayType : boolArrayType | Call ReturnsBoolArrayType
 ForEach : forEach
 //
 // methods
@@ -216,4 +216,26 @@ ReturnsNum : returnsNumType
 ReturnsChar : returnsCharType
 ReturnsBool : returnsBoolType
 ReturnsStr : returnsStrType
+ReturnsVoid : voidType
+StrType : returnsStrType | strType
+Call : callPara
 // return statements
+Return : return
+ReturningNum : Return NumType | Return FullInfix | Return FullIncrement | Return DubLit | Return Null
+ReturningChar : Return CharLit | Return CharType | Return Null
+ReturningStr : Return StrLit | Return StrType | Return Null
+ReturningBool : Return BoolType | Return True | Return False | Return Null
+FullReturnNum : ReturningNum Punc
+FullReturnChar : ReturningChar Punc
+FullReturnBool : ReturningBool Punc
+FullReturnStr : ReturningStr Punc
+//
+// Declarations
+//
+Param : param
+ReturnType : returnType
+ParaNum : Para ReturnsNum
+ParaChar : Para ReturnsChar
+ParaBool : Para ReturnsBool
+ParaStr : Para ReturnsStr
+ParaVoid : Para ReturnsVoid
