@@ -41,7 +41,7 @@ Signee : signee
 // print statements - to be updated in milestone 3
 //
 Print : print
-Tempstr : strLit | string | true | false | boolType | numType | charLit | charType | dubLit | Tempstr BackEnd | BeginOp Value | PV IV | NumType Inc | NumType Dec
+Tempstr : strLit | string | true | false | boolType | numType | charLit | charType | dubLit | Tempstr BackEnd | BeginOp Value | PV IV | NumType Inc | NumType Dec | returnsStrType
 ToPrint : Print Tempstr
 Fullprint : ToPrint Punc
 //
@@ -68,8 +68,8 @@ asignDec : Asign matchedLit | asignDec BackEnd | PrefixAsignment IV
 PrefixAsignment : Asign PV
 //
 asignBool : Asign BoolValue | Asign FullBoolStatement
-Type : Bool | double | char | string | boolArray | strArray | numArray
-matchedLit : Bool true | Bool false | Bool null | Double Null | Double DubLit | Char Null | Char CharLit | String StrLit | String Null
+Type : Bool | double | char | string | boolArray | strArray | numArray | returnsCharType | returnsNumType | returnsBoolType | returnsStrType
+matchedLit : Bool true | Bool false | Bool null | Double Null | Double DubLit | Char Null | Char CharLit | String StrLit | String Null | returnsCharType | returnsNumType | returnsBoolType | returnsStrType
 Null : null
 Double : double
 Char : char
@@ -88,7 +88,7 @@ StrLit : strLit
 // Infix operators
 FullInfix : FullInfix BackEnd | BeginOp Value
 BeginOp : Value Op
-Value : numType | Double DubLit | NumType Inc | NumType Dec | dubLit
+Value : numType | Double DubLit | NumType Inc | NumType Dec | dubLit | returnsNumType
 Op : addInfix | subInfix | multInfix | divInfix
 BackEnd : Op Value
 //
@@ -106,7 +106,7 @@ BP : BackEnd Punc | BackEnd BP
 //
 Fan : asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix
 asignNum : NumType Asign
-NumType : numType
+NumType : numType | returnsNumType
 FinishAsignNum : FullInfix Punc
 numTypePunc : numType punc | FullIncrement Punc
 VP : Value Punc
@@ -124,7 +124,7 @@ Nb : Not BoolValue | bool True | bool False | bool Null | boolType | Not FullNum
 BeginBoolStatement : Nb And | Nb Or | Nb Equals
 FullBoolStatement : BeginBoolStatement Nb | FullBoolStatement BoolBack | FullBeginXOR Nb
 BoolBack : And Nb | Or Nb
-BoolValue : bool True | bool False | bool Null | boolType | bool FullNumBool | BeginNumBool Value
+BoolValue : bool True | bool False | bool Null | boolType | bool FullNumBool | BeginNumBool Value | returnsBoolType
 And : and
 Or : or
 Not : not
@@ -199,8 +199,21 @@ FNumI : FNum ForEach
 FCharI : FChar ForEach
 FBoolI : FBool ForEach
 FStrI : FStr ForEach
-NumArrayType : numArrayType
-CharArrayType : charArrayType
-StrArrayType : strArrayType
-BoolArrayType : boolArrayType
+NumArrayType : numArrayType | returnsNumArrayType
+CharArrayType : charArrayType | returnsCharArrayType
+StrArrayType : strArrayType | returnsStrArrayType
+BoolArrayType : boolArrayType | returnsBoolArrayType
 ForEach : forEach
+//
+// methods
+// Begining with all of the terminal symbols
+Param : param
+ReturnType : returnType
+Para : para
+Return : return
+Call : callPara
+ReturnsNum : returnsNumType
+ReturnsChar : returnsCharType
+ReturnsBool : returnsBoolType
+ReturnsStr : returnsStrType
+// return statements
