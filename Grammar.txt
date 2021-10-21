@@ -234,8 +234,27 @@ FullReturnStr : ReturningStr Punc
 //
 Param : param
 ReturnType : returnType
-ParaNum : Para ReturnsNum
+ParaNumArr : Para ReturnsNumArrayType
+ParaCharArr : Para ReturnsCharArrayType
+ParaBoolArr : Para ReturnsBoolArrayType
+ParaStrArr : Para ReturnsStrArrayType
 ParaChar : Para ReturnsChar
 ParaBool : Para ReturnsBool
 ParaStr : Para ReturnsStr
 ParaVoid : Para ReturnsVoid
+ParaNumArr : Para Returns
+SameType : Double Double | String String | Char Char | Bool Bool | NumArray NumArray | StrArray StrArray | CharArray CharArray | BoolArray BoolArray
+NumArray : numArray
+StrArray : strArray
+CharArray : charArray
+BoolArray : boolArray
+pSame : Param SameType
+FullPSame : Param SameType | FullPSame pSame
+WillReturnNum : ReturnType Double
+WillReturnChar : ReturnType Char
+WillReturnBool : ReturnType Bool
+WillReturnStrArr : ReturnType String
+WillReturnNumArr : ReturnType NumArray
+WillReturnCharArr : ReturnType CharArray
+WillReturnBoolArr : ReturnType BoolArray
+WillReturnStrArr : ReturnType StrArray
