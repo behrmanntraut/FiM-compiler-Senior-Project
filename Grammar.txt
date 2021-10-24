@@ -2,10 +2,12 @@
 // @author Brandon Ehrmanntraut 
 S : Opening A
 A : F Closing
-F : N F | Imports F | endfile | M F
+F : N F | Imports F | endfile | M F | FullParagraph2 F
 M : Manestart X
 X : Q ManeEnd
-Q : GeneralLine Q | endMainfunc 
+Q : GeneralLine Q | endMainfunc
+EndMainFunc2 : endMainfunc
+EndMainFunc : N EndMainFunc2
 // A structure to store any general line
 GeneralLine : n | decType Punc | asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix | FullIncrement Punc | FullAsignBool Punc | CompleteIfLine QQ | ToPrint Punc | BSP InnerCase | FullFor InnerFor
 //
@@ -217,14 +219,22 @@ ReturnsChar : returnsCharType
 ReturnsBool : returnsBoolType
 ReturnsStr : returnsStrType
 ReturnsVoid : voidType
+ReturnsNumArrayType : returnsNumArrayType
+ReturnsCharArrayType : returnsCharArrayType
+ReturnsBoolArrayType : returnsBoolArrayType
+ReturnsStrArrayType : returnsStrArrayType
 StrType : returnsStrType | strType
 Call : callPara
 // return statements
 Return : return
-ReturningNum : Return NumType | Return FullInfix | Return FullIncrement | Return DubLit | Return Null
+ReturningNum : Return NumType | Return FullInfix | Return FullIncrement | Return DubLit | Return Null | Return Value
 ReturningChar : Return CharLit | Return CharType | Return Null
 ReturningStr : Return StrLit | Return StrType | Return Null
 ReturningBool : Return BoolType | Return True | Return False | Return Null
+ReturningStrArr : Return StrArray | Return Null
+ReturningNumArr : Return NumArray | Return Null
+ReturningCharArr : Return CharArray | Return Null
+ReturningBoolArr : Return BoolArray | Return Null
 FullReturnNum : ReturningNum Punc
 FullReturnChar : ReturningChar Punc
 FullReturnBool : ReturningBool Punc
@@ -261,7 +271,6 @@ WillReturnNumArr2 : ReturnType NumArray
 WillReturnCharArr2 : ReturnType CharArray
 WillReturnBoolArr2 : ReturnType BoolArray
 WillReturnStrArr2 : ReturnType StrArray
-
 WillReturnNum : WillReturnNum2 Punc
 WillReturnChar : WillReturnChar2 Punc
 WillReturnBool : WillReturnBool2 Punc
@@ -290,4 +299,37 @@ FullParaDecChar : ParaCharParam WillReturnChar | ParaChar WillReturnChar
 FullParaDecBool : ParaBoolParam WillReturnBool | ParaBool WillReturnBool
 FullParaDecStr : ParaStrParam WillReturnStr | ParaStr WillReturnStr
 // can't forget void types!
-FUllParaDecVoid : ParaVoidParam Punc | ParaVoidParam Punc
+FullParaDecVoid : ParaVoidParam Punc | ParaVoidParam Punc
+// General insides of a general paragraph
+InnerNum : GeneralLine InnerNum | ReturningNum Punc
+InnerChar : GeneralLine InnerChar | ReturningChar Punc
+InnerStr : GeneralLine InnerStr | ReturningStr Punc
+InnerBool : GeneralLine InnerBool | ReturningBool Punc
+InnerNumArr : GeneralLine InnerNumArr | ReturningNumArr Punc
+InnerCharArr : GeneralLine InnerCharArr | ReturningCharArr Punc
+InnerStrArr : GeneralLine InnerStrArr | ReturningStrArr Punc
+InnerBoolArr : GeneralLine InnerBoolArr | ReturningBoolArr Punc
+// Now to tie the checked return statements 
+// First check the endMainFunc token with the name after it
+// Rememeber voidType is ReturnsVoid
+EndNumPara : EndMainFunc ReturnsNum
+EndCharPara : EndMainFunc ReturnsChar
+EndBoolPara : EndMainFunc ReturnsBool
+EndStrPara : EndMainFunc ReturnsStr
+EndNumArrPara : EndMainFunc ReturnsNumArrayType
+EndCharArrPara : EndMainFunc ReturnsCharArrayType
+EndBoolArrPara : EndMainFunc ReturnsBoolArrayType
+EndStrArrPara : EndMainFunc ReturnsStrArrayType
+// And finally to close everything up
+FullInnerNum : InnerNum EndNumPara
+FullInnerChar : InnerChar EndCharPara
+FullInnerBool : InnerBool EndBoolPara
+FullInnerStr : InnerStr EndStrPara
+FullInnerNumArr : InnerNumArr EndNumArrPara
+FullInnerCharArr : InnerCharArr EndCharArrPara
+FullInnerBoolArr : InnerBoolArr EndBoolArrPara
+FullInnerStrArr : InnerStrArr EndStrArrPara
+FullInnerVoid : GeneralLine FullInnerVoid | EndMainFunc ReturnsVoid
+// The final call for all paragraph stuff down here
+FullParagraph : FullParaDecNumArr FullInnerNumArr | FullParaDecCharArr FullInnerCharArr | FullParaDecBoolArr FullInnerBoolArr | FullParaDecStrArr FullInnerStrArr | FullParaDecNum FullInnerNum | FullParaDecChar FullInnerChar | FullParaDecBool FullInnerBool | FullParaDecStr FullInnerStr | FullParaDecVoid FullInnerVoid
+FullParagraph2 : FullParagraph Punc
