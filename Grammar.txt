@@ -232,6 +232,7 @@ FullReturnStr : ReturningStr Punc
 //
 // Declarations
 //
+// Declaring start of method
 Param : param
 ReturnType : returnType
 ParaNumArr : Para ReturnsNumArrayType
@@ -242,7 +243,8 @@ ParaChar : Para ReturnsChar
 ParaBool : Para ReturnsBool
 ParaStr : Para ReturnsStr
 ParaVoid : Para ReturnsVoid
-ParaNumArr : Para Returns
+ParaNum : Para ReturnsNum
+// Parameters
 SameType : Double Double | String String | Char Char | Bool Bool | NumArray NumArray | StrArray StrArray | CharArray CharArray | BoolArray BoolArray
 NumArray : numArray
 StrArray : strArray
@@ -250,11 +252,42 @@ CharArray : charArray
 BoolArray : boolArray
 pSame : Param SameType
 FullPSame : Param SameType | FullPSame pSame
-WillReturnNum : ReturnType Double
-WillReturnChar : ReturnType Char
-WillReturnBool : ReturnType Bool
-WillReturnStrArr : ReturnType String
-WillReturnNumArr : ReturnType NumArray
-WillReturnCharArr : ReturnType CharArray
-WillReturnBoolArr : ReturnType BoolArray
-WillReturnStrArr : ReturnType StrArray
+// setting return type
+WillReturnNum2 : ReturnType Double
+WillReturnChar2 : ReturnType Char
+WillReturnBool2 : ReturnType Bool
+WillReturnStr2 : ReturnType String
+WillReturnNumArr2 : ReturnType NumArray
+WillReturnCharArr2 : ReturnType CharArray
+WillReturnBoolArr2 : ReturnType BoolArray
+WillReturnStrArr2 : ReturnType StrArray
+
+WillReturnNum : WillReturnNum2 Punc
+WillReturnChar : WillReturnChar2 Punc
+WillReturnBool : WillReturnBool2 Punc
+WillReturnStr : WillReturnStr2 Punc
+WillReturnNumArr : WillReturnNumArr2 Punc
+WillReturnCharArr : WillReturnCharArr2 Punc
+WillReturnBoolArr : WillReturnBoolArr2 Punc
+WillReturnStrArr : WillReturnStrArr2 Punc
+// Does this have parameters?
+ParaNumArrParam : ParaNumArr FullPSame
+ParaCharArrParam : ParaCharArr FullPSame
+ParaBoolArrParam : ParaBoolArr FullPSame
+ParaStrArrParam : ParaStrArr FullPSame
+ParaCharParam : ParaChar FullPSame
+ParaBoolParam : ParaBool FullPSame
+ParaStrParam : ParaStr FullPSame
+ParaVoidParam : ParaVoid FullPSame
+ParaNumParam : ParaNum FullPSame
+// Full declaration line finally, needs to remain typed to match to a return statement later
+FullParaDecNumArr : ParaNumArrParam WillReturnNumArr | ParaNumArr WillReturnNumArr 
+FullParaDecCharArr : ParaCharArrParam WillReturnCharArr | ParaCharArr WillReturnCharArr 
+FullParaDecBoolArr : ParaBoolArrParam WillReturnBoolArr | ParaBoolArr WillReturnBoolArr
+FullParaDecStrArr : ParaStrArrParam WillReturnStrArr | ParaStrArr WillReturnStrArr
+FullParaDecNum : ParaNumParam WillReturnNum | ParaNum WillReturnNum
+FullParaDecChar : ParaCharParam WillReturnChar | ParaChar WillReturnChar
+FullParaDecBool : ParaBoolParam WillReturnBool | ParaBool WillReturnBool
+FullParaDecStr : ParaStrParam WillReturnStr | ParaStr WillReturnStr
+// can't forget void types!
+FUllParaDecVoid : ParaVoidParam Punc | ParaVoidParam Punc
