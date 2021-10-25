@@ -151,5 +151,13 @@ public class Method{
 		System.out.println(method);
 	}
 	
+	public ArrayList<String> getParamVars(){
+		ArrayList<String> paramVars = new ArrayList<String>();
+		for(int i=0;i<params.size();i++){
+			paramVars.add(containedVars.get(i));
+		}
+		return paramVars;
+	}
+	
 	
 }

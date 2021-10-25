@@ -485,12 +485,26 @@ public class token{
 	}
 	
 	/**
-	*At the begining of the file we have some shenanigans with the report name at the end of the line, but it is being defined by Dear at the begining so this is here to handle that one single case
-	*@param keyWord the String representing the keyword
-	*@return Boolean true if the keyword is beginfile
+	*Just checks if a paragraph is being declared
 	*/
-	private Boolean isSuperSpecialKeyword(String keyWord){
-		if(keyWord=="beginfile"){
+	private Boolean isPara(String keyWord){
+		if(keyWord=="voidType"){
+			return true;
+		}else if(keyWord.equals("returnsNumType")){
+			return true;
+		}else if(keyWord.equals("returnsCharType")){
+			return true;
+		}else if(keyWord.equals("returnsBoolType")){
+			return true;
+		}else if(keyWord.equals("returnsStrType")){
+			return true;
+		}else if(keyWord.equals("returnsBoolArrayType")){
+			return true;
+		}else if(keyWord.equals("returnsStrArrayType")){
+			return true;
+		}else if(keyWord.equals("returnsNumArrayType")){
+			return true;
+		}else if(keyWord.equals("returnsCharArrayType")){
 			return true;
 		}else{
 			return false;
@@ -597,6 +611,8 @@ public class token{
 		Boolean stringsPresent=false;
 		Boolean lookingForInfix=false;
 		Boolean varNameInForLoop=false;
+		Boolean needFullDec=false;
+		ArrayList<String> storedParams = new ArrayList<String>();
 		for(int start=0;start<line.length;start++){//each start word
 			for(int len=line.length;len>=0;len--){//each length
 				if(start+len>line.length){
@@ -655,6 +671,19 @@ public class token{
 						lookingForInfix=true;
 					}else if(keys.get(cur).equals("for")){
 						varNameInForLoop=true;
+					}else if(isPara(keys.get(cur)) && needFullDec){//I see a paragraph and its beign declared here
+						needFullDec=false;
+						symbolTable.add(cur);
+						Method tempMethod = new Method(cur);
+						for(Method m : methods){
+							if(m.equals(tempMethod)){
+								tempMethod = m;
+								break;
+							}
+						}
+						storedParams.addAll(tempMethod.getParamVars());
+					}else if(keys.get(cur).equals("para")){//I see the para keyword
+						needFullDec=true;
 					}
 					start--;
 					break;
@@ -706,6 +735,7 @@ public class token{
 		}else if(!vars.isEmpty()){
 			symbolTable.addAll(vars.getVars());
 		}
+		symbolTable.addAll(storedParams);
 		tokens.addAll(thisLinesTokens);
 		
 	}
