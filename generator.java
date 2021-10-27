@@ -94,6 +94,8 @@ public class generator{
 			return switchClose();
 		}else if(cur.equals("for")){
 			return For();
+		}else if(cur.equals("para")){
+			return Para();
 		}
 		System.out.println("Token location: " + loc);
 		throw new IllegalArgumentException("The code generator did not know what to do when it encountered the token: " + cur);
@@ -624,6 +626,109 @@ public class generator{
 			builder = builder.concat("){");
 		}
 		tabCount++;
+		return builder;
+	}
+	
+	/**
+	*Returns a string version of a paragraph declaration
+	*@return String the string representation of a paragraph representation
+	*/
+	private String Para(){
+		String builder = tabs();
+		tabCount++;
+		builder = builder.concat("public static ");
+		String name = symbols.get(varCount);
+		varCount++;
+		loc+=2;
+		ArrayList<String> types = new ArrayList<String>();
+		ArrayList<String> params = new ArrayList<String>();
+		while(tokens.get(loc).equals("param")){
+			types.add(tokens.get(loc+1));
+			params.add(symbols.get(varCount));
+			varCount++;
+			loc +=3;
+		}
+		types = typeConversions(types);
+		if(tokens.get(loc).equals("returnType")){
+			builder = builder.concat(typeConversion(tokens.get(loc+1)));
+			loc += 2;
+		}else if(tokens.get(loc).equals("punc")){
+			//void type
+			builder = builder.concat("void");
+			loc += 2;
+		}else{
+			throw new IllegalArgumentException("Unexpected token in method declaration. Token seen: " + tokens.get(loc));
+		}
+		builder = builder.concat(" " + name + "(");
+		Boolean haveParams = false;
+		for(int i=0;i<types.size();i++){
+			haveParams=true;
+			builder = builder.concat(types.get(i) + " " + params.get(i) + ", ");
+		}
+		if(haveParams){
+			builder = builder.substring(0,builder.lastIndexOf(","));
+		}
+		builder = builder.concat("){");
+		loc++; 
+		System.out.println(builder);
+		return builder;
+	}
+	
+	/**
+	*Translates FiM types to java types
+	*@param types the FiM types
+	*@return ArrayList<String> the java types
+	*/
+	private ArrayList<String> typeConversions(ArrayList<String> types){
+		ArrayList<String> javaTypes = new ArrayList<String>();
+		for(String s : types){
+			javaTypes.add(typeConversion(s));
+		}
+		return javaTypes;
+	}
+	
+	/**
+	*Converts one FiM type into a java type
+	*@param type the FiM type
+	*@return String the java type
+	*/
+	private String typeConversion(String type){
+		if(type.equals("double")){
+			return type;
+		}else if(type.equals("char")){
+			return type;
+		}else if(type.equals("Bool")){
+			return "boolean";
+		}else if(type.equals("string")){
+			return "String";
+		}else if(type.equals("numArray")){
+			return "double[]";
+		}else if(type.equals("strArray")){
+			return "String[]";
+		}else if(type.equals("boolArray")){
+			return "boolean[]";
+		}else{
+			throw new IllegalArgumentException("Unsure of how to convert " + type + " into a java primitive type");
+		}
+	}
+	
+	/**
+	*Returns the string representation of a return statement
+	*@returns String the return statement in java code
+	*/
+	private String returnStatement(){
+		String builder = tabs();
+		builder = builder.concat("return ");
+		loc++;
+		//determine if I need to hand this line to the num statement builder or the bool statement builder
+		if(tokens.get(loc).equals("dubLit")){
+			
+		}else if(tokens.get(loc).equals("numType")){
+			
+		}
+		
+		builder = builder.concat(";");
+		loc++;
 		return builder;
 	}
 	
