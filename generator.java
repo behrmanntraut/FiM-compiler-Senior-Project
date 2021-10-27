@@ -96,6 +96,8 @@ public class generator{
 			return For();
 		}else if(cur.equals("para")){
 			return Para();
+		}else if(cur.equals("return")){
+			return returnStatement();
 		}
 		System.out.println("Token location: " + loc);
 		throw new IllegalArgumentException("The code generator did not know what to do when it encountered the token: " + cur);
@@ -321,7 +323,7 @@ public class generator{
 		String builder = "";
 		while(!tokens.get(loc).equals("punc")){
 			if(tokens.get(loc).equals("double")){//a literal value
-				builder=builder.concat("(int) " + symbols.get(varCount));
+				builder=builder.concat(symbols.get(varCount));
 				loc+=2;
 				varCount++;
 			}else if(tokens.get(loc).equals("addInfix")){//+
@@ -385,9 +387,11 @@ public class generator{
 				builder = builder.concat(" <= ");
 				loc++;
 			}else if(tokens.get(loc).equals("dubLit")){
-				builder = builder.concat("(int) " + symbols.get(varCount));
+				builder = builder.concat(symbols.get(varCount));
 				varCount++;
 				loc++;
+			}else if(tokens.get(loc).equals("callPara")){
+				throw new IllegalArgumentException("I have not handled calling methods yet... Soon hopefully");
 			}else{
 				break; //unsure of what to do here, so breaking loop
 			}
@@ -721,10 +725,32 @@ public class generator{
 		builder = builder.concat("return ");
 		loc++;
 		//determine if I need to hand this line to the num statement builder or the bool statement builder
+		if(tokens.get(loc).equals("callPara")){
+			loc++;
+		}
 		if(tokens.get(loc).equals("dubLit")){
-			
+			builder = builder.concat(numStatement());
 		}else if(tokens.get(loc).equals("numType")){
-			
+			builder = builder.concat(numStatement());
+		}else if(tokens.get(loc).equals("returnsNumType")){
+			builder = builder.concat(numStatement());
+		}else if(tokens.get(loc).equals("double")){
+			builder = builder.concat(numStatement());
+		}else if(tokens.get(loc).equals("true")){
+			builder = builder.concat(boolStatement());
+		}else if(tokens.get(loc).equals("false")){
+			builder = builder.concat(boolStatement());
+		}else if(tokens.get(loc).equals("returnsBoolType")){
+			builder = builder.concat(boolStatement());
+		}else if(tokens.get(loc).equals("boolType")){
+			builder = builder.concat(boolStatement());
+		}else{
+			//at this point I am handing it a literal or a varaible name, both are stored in the symbol table
+			builder = builder.concat(symbols.get(varCount));
+			varCount++;
+			while(!tokens.get(loc).equals("punc")){
+				loc++; //this loop solves the problem of seeing a type determiner before a literal
+			}
 		}
 		
 		builder = builder.concat(";");
