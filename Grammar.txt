@@ -9,7 +9,7 @@ Q : GeneralLine Q | endMainfunc
 EndMainFunc2 : endMainfunc
 EndMainFunc : N EndMainFunc2
 // A structure to store any general line
-GeneralLine : n | decType Punc | asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix | FullIncrement Punc | FullAsignBool Punc | CompleteIfLine QQ | ToPrint Punc | BSP InnerCase | FullFor InnerFor
+GeneralLine : n | decType Punc | asignNum FinishAsignNum | asignNum numTypePunc | asignNum VP | asignNum AllPrefix | FullIncrement Punc | FullAsignBool Punc | CompleteIfLine QQ | ToPrint Punc | BSP InnerCase | FullFor InnerFor | CallingPara Punc | CallingPara APunc
 //
 // opening the file
 //
@@ -335,7 +335,7 @@ FullParagraph2 : FullParagraph Punc
 // Calling methods, but only independently
 // Call : callPara
 ALiteral : strLit | dubLit | charLit | true | false | null
-AnyParams : param ALiteral | param Type | AnyParams ASP
+AnyParams : Param ALiteral | Param Type | AnyParams ASP
 ASP : And Type | And ALiteral
 AnyReturns : returnsNumType | returnsCharType | returnsBoolType | returnsStrType | voidType | returnsNumArrayType | returnsCharArrayType | returnsBoolArrayType | returnsStrArrayType
 CallingPara : Call AnyReturns
