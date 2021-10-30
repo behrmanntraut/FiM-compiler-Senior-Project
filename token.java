@@ -620,6 +620,7 @@ public class token{
 				}
 				String cur = build(line,start,len);
 				//System.out.println(cur);
+				//System.out.println(tokens);
 				//System.out.println(varLoc + "\t" + varEnd);
 				//System.out.println(symbolTable);
 				if(lookingForInfix && isInfix(cur)){
@@ -714,6 +715,7 @@ public class token{
 			}
 		}
 		if(!varLoc.isEmpty() || stringsPresent){
+			
 			if(varLoc.size()!=varEnd.size()){
 				varEnd.add(varLoc.get(varLoc.size()-1));
 			}
@@ -967,24 +969,35 @@ public class token{
 	*@param lookAt an int telling the method where the type actually is
 	*@return String the name of the type that the findTypes needs
 	*/
-	private String getBasicType(ArrayList<String> tokens, int lookAt){
-		String type = "If you see this in the final token there is a problem";
-		for(int i=lookAt;i<tokens.size();i++){
-			if(tokens.get(i)=="Bool"){
+	private String getBasicType(ArrayList<String> tokens2, int lookAt){
+		String type = "";
+		for(int i=lookAt;i<tokens2.size();i++){
+			if(tokens2.get(i)=="Bool"){
 				return "boolType";
-			}else if(tokens.get(i)=="double"){
+			}else if(tokens2.get(i)=="double"){
 				return "numType";
-			}else if(tokens.get(i)=="char"){
+			}else if(tokens2.get(i)=="char"){
 				return "charType";
-			}else if(tokens.get(i)=="string"){
+			}else if(tokens2.get(i)=="string"){
 				return "strType";
-			}else if(tokens.get(i)=="strArray"){
+			}else if(tokens2.get(i)=="strArray" || tokens2.get(i)=="returnsStrArrayType"){
 				return "strArrayType";
-			}else if(tokens.get(i)=="numArray"){
+			}else if(tokens2.get(i)=="numArray" || tokens2.get(i)=="returnsNumArrayType"){
 				return "numArrayType";
-			}else if(tokens.get(i)=="boolArray"){
+			}else if(tokens2.get(i)=="boolArray" || tokens2.get(i)=="returnsBoolArrayType"){
 				return "boolArrayType";
+			}else if(tokens2.get(i)=="returnsNumType"){
+				return "numType";
+			}else if(tokens2.get(i)=="returnsBoolType"){
+				return "boolType";
+			}else if(tokens2.get(i)=="returnsCharType"){
+				return "charType";
+			}else if(tokens2.get(i)=="returnsStrType"){
+				return "strType";
 			}
+		}
+		if(type.isEmpty()){
+			throw new IllegalArgumentException("Unable to asign a basic type using: " + tokens2 + " starting at: " + lookAt );
 		}
 		return type;
 	}
