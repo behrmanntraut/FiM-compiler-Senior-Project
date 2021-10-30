@@ -56,9 +56,11 @@ public class LineVars{
 	*@return ArrayList<String> the stored variables
 	*/
 	public ArrayList<String> getVars(){
-		//System.out.println("returning vars: ");
-		//print();
-		return vars;
+		if(!contrainsEmptySpace()){
+			return vars;
+		}else{
+			throw new IllegalArgumentException("Not all variable slots were properly filled");
+		}
 	}
 	
 	/**
@@ -92,5 +94,13 @@ public class LineVars{
 		}
 	}
 	
+	private Boolean contrainsEmptySpace(){
+		for(String s : vars){
+			if(s.isEmpty()){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 }
