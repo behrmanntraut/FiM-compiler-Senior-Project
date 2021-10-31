@@ -100,6 +100,8 @@ public class generator{
 			return Para();
 		}else if(cur.equals("return")){
 			return returnStatement();
+		}else if(cur.equals("callPara")){
+			return callingPara();
 		}
 		System.out.println("Token location: " + loc);
 		throw new IllegalArgumentException("The code generator did not know what to do when it encountered the token: " + cur);
@@ -795,6 +797,17 @@ public class generator{
 		return builder;
 	}
 	
+	/**
+	*A line that just calls another paragraph
+	*@return Stirng, the called paragraph in java
+	*/
+	private String callingPara(){
+		loc++;
+		String temp = tabs();
+		temp = temp + buildMethodCall() + ";";
+		loc++;
+		return temp;
+	}
 	
 }
 
