@@ -315,6 +315,14 @@ public class token{
 	}
 	
 	/**
+	*Returns all of the already generated method objects
+	*@return ArrayList<Method> all of the methods for this report
+	*/
+	public ArrayList<Method> getMethods(){
+		return methods;
+	}
+	
+	/**
 	*Builds the first line of tokens, done seperately because this line is weird
 	*@param line the line itself
 	*/
@@ -650,7 +658,7 @@ public class token{
 						
 					}
 					start+=len;
-					if(symbolTable.contains(cur)){
+					if(symbolTable.contains(cur) || methods.contains(new Method(cur))){
 						vars.add(cur);
 						//symbolTable.add(cur);
 						//System.out.println("Adding to symbol table: " + cur);
@@ -674,7 +682,7 @@ public class token{
 						varNameInForLoop=true;
 					}else if(isPara(keys.get(cur)) && needFullDec){//I see a paragraph and its beign declared here
 						needFullDec=false;
-						symbolTable.add(cur);
+						//symbolTable.add(cur); this line was originally need, but is now redundently add in the name of the paragraph
 						Method tempMethod = new Method(cur);
 						for(Method m : methods){
 							if(m.equals(tempMethod)){
