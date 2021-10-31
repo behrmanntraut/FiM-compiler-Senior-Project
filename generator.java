@@ -15,16 +15,18 @@ public class generator{
 	private int varCount=0;//current location in ST
 	private int loc=0;//current token we are at
 	private String ReportName = "";
-	Boolean firstCase=false;
+	private Boolean firstCase=false;
+	private ArrayList<Method> methods = new ArrayList<Method>();
 	
 	/**
 	*Class constructor
 	*@param tokens the list of tokens that was derived from the original file
 	*@param symbols the list of user defined items
 	*/
-	public generator(String[] Tokens, ArrayList<String> Symbols){
+	public generator(String[] Tokens, ArrayList<String> Symbols, ArrayList<Method> methods){
 		tokens = new ArrayList<String>(Arrays.asList(Tokens));
 		symbols = Symbols;
+		this.methods = methods;
 	}
 	
 	/**
@@ -308,7 +310,7 @@ public class generator{
 			loc++;
 			builder = builder.concat(numStatement());
 		}else{
-			throw new IllegalArgumentException("Expecting token \"aign\" but instead recieved: " + tokens.get(loc));
+			throw new IllegalArgumentException("Expecting token \"asign\" but instead recieved: " + tokens.get(loc));
 		}
 		builder = builder.concat(";");
 		loc++;
@@ -322,6 +324,7 @@ public class generator{
 	private String numStatement(){
 		String builder = "";
 		while(!tokens.get(loc).equals("punc")){
+			//System.out.println(tokens.get(loc));
 			if(tokens.get(loc).equals("double")){//a literal value
 				builder=builder.concat(symbols.get(varCount));
 				loc+=2;
@@ -390,8 +393,8 @@ public class generator{
 				builder = builder.concat(symbols.get(varCount));
 				varCount++;
 				loc++;
-			}else if(tokens.get(loc).equals("callPara")){
-				throw new IllegalArgumentException("I have not handled calling methods yet... Soon hopefully");
+			}else if(tokens.get(loc).equals("returnsNumType")){
+				builder = builder.concat(buildMethodCall());
 			}else{
 				break; //unsure of what to do here, so breaking loop
 			}
@@ -415,6 +418,8 @@ public class generator{
 		}else if(tokens.get(loc).equals("multPrefix")){
 			return true;
 		}else if(tokens.get(loc).equals("divPrefix")){
+			return true;
+		}else if(tokens.get(loc).equals("returnsNumType")){
 			return true;
 		}
 		return false;
@@ -642,6 +647,7 @@ public class generator{
 		tabCount++;
 		builder = builder.concat("public static ");
 		String name = symbols.get(varCount);
+		System.out.println(varCount);
 		varCount++;
 		loc+=2;
 		ArrayList<String> types = new ArrayList<String>();
@@ -674,7 +680,6 @@ public class generator{
 		}
 		builder = builder.concat("){");
 		loc++; 
-		System.out.println(builder);
 		return builder;
 	}
 	
@@ -755,6 +760,39 @@ public class generator{
 		
 		builder = builder.concat(";");
 		loc++;
+		return builder;
+	}
+	
+	/**
+	*Builds up a method call
+	*@return String the method call in java
+	*/
+	private String buildMethodCall(){
+		String builder = "";
+		//how do I ensure that I have the last parameter? Do I need to get the method classes built by the token generator? I think that may be best
+		Method method = new Method("Bad name");
+		for(Method m : methods){
+			if(m.equals(new Method(symbols.get(varCount)))){
+				method = m;
+			}
+		}
+		if(method.equals(new Method("Bad name"))){
+			throw new IllegalArgumentException("Code generator unable to find method named: " + symbols.get(varCount));
+		}
+		varCount++;
+		loc +=2;
+		builder = builder.concat(" " + method.getName() + "(");
+		ArrayList<String> params = method.getParamVars();
+		for(int i=0;i<params.size();i++){
+			builder = builder.concat(symbols.get(varCount));
+			varCount++;
+			loc++;
+			if(tokens.get(loc).equals("and") && i<params.size()-1){
+				loc++;
+				builder = builder.concat(", ");
+			}
+		}
+		builder = builder.concat(")");
 		return builder;
 	}
 	
