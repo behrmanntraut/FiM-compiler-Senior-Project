@@ -102,6 +102,7 @@ public class Method{
 	*@param other the other thing to compare this to
 	*@return boolean true if they are the same object
 	*/
+	@Override
 	public boolean equals(Object other){
 		try{
 			return this.equals((Method) other);
@@ -151,6 +152,10 @@ public class Method{
 		System.out.println(method);
 	}
 	
+	/**
+	*Returns all of the varaible names of the parameters
+	*@return ArrayList<String> all of the varaibles that are also parameters
+	*/
 	public ArrayList<String> getParamVars(){
 		ArrayList<String> paramVars = new ArrayList<String>();
 		for(int i=0;i<params.size();i++){
