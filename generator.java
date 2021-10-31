@@ -647,7 +647,6 @@ public class generator{
 		tabCount++;
 		builder = builder.concat("public static ");
 		String name = symbols.get(varCount);
-		System.out.println(varCount);
 		varCount++;
 		loc+=2;
 		ArrayList<String> types = new ArrayList<String>();
