@@ -48,4 +48,17 @@ public class ErrorList{
 		}
 	}
 	
+	/**
+	*Returns true if there is a priority 1 error anywhere within this
+	*@return Boolean true if errors should be thrown
+	*/
+	public Boolean shouldThrowErrors(){
+		for(Error e : errors){
+			if(e.getUrgency()==1){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

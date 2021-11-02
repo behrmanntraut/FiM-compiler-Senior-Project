@@ -16,11 +16,14 @@ public class token{
 	private ArrayList<String> symbolTable = new ArrayList<String>();
 	private ArrayList<String> tokens = new ArrayList<String>();
 	private ArrayList<Method> methods = new ArrayList<Method>();
+	private ErrorList errors;
 	/**
 	*Class constructor
 	*@param FIM the file that is to be read
+	*@param errors an object to track all the errors I find
 	*/
-	public token(String FIM){
+	public token(String FIM, ErrorList errors){
+		this.errors = errors;
 		lines = read(FIM);
 		buildKeywords();
 	}
@@ -304,7 +307,7 @@ public class token{
 		firstLine(line.get(0));
 		tokens.add("n");
 		for(int l=1;l<line.size();l++){//for each line
-			doLine(line.get(l));
+			doLine(line.get(l),l);
 			tokens.add("n");
 		}
 		tokens.remove(tokens.size()-1);//remove the last newline as the file ends
@@ -601,12 +604,14 @@ public class token{
 		}
 	}
 	
-	ArrayList<Integer> tokenPos = new ArrayList<Integer>();
+	private Boolean alreadyBegunUnknown=false;
+	private ArrayList<Integer> tokenPos = new ArrayList<Integer>();
 	/**
 	*A breakdown of run that tokenizes a single line - void as all needed things to write to are already global variables
 	*@param line, the String[] that makes up the line
+	*@param lineNum the number of this line, used for errors
 	*/
-	private void doLine(String[] line){
+	private void doLine(String[] line, int lineNum){
 		ArrayList<String> thisLinesTokens = new ArrayList<String>();
 		ArrayList<Integer> varLoc = new ArrayList<Integer>();
 		ArrayList<Integer> varLocStr = new ArrayList<Integer>();
@@ -620,8 +625,13 @@ public class token{
 		Boolean lookingForInfix=false;
 		Boolean varNameInForLoop=false;
 		Boolean needFullDec=false;
+		Boolean needEndOfUnknown=false;
+		int beginOfUnknown=0;
+		int endOfUnkown=0;
+		
 		ArrayList<String> storedParams = new ArrayList<String>();
 		for(int start=0;start<line.length;start++){//each start word
+			endOfUnkown=start;
 			for(int len=line.length;len>=0;len--){//each length
 				if(start+len>line.length){
 					continue;
@@ -632,6 +642,8 @@ public class token{
 				//System.out.println(varLoc + "\t" + varEnd);
 				//System.out.println(symbolTable);
 				if(lookingForInfix && isInfix(cur)){
+					buildUnknownPhraseException(needEndOfUnknown,beginOfUnknown,endOfUnkown,lineNum,line);
+					needEndOfUnknown=false;
 					String infixType = getInfixType(thisLinesTokens, cur);
 					thisLinesTokens.add(infixType);
 					if(lookForEnd){
@@ -647,6 +659,8 @@ public class token{
 					start--;
 					lookingForInfix=false;
 				}else if(isKeyword(cur)){
+					buildUnknownPhraseException(needEndOfUnknown,beginOfUnknown,endOfUnkown,lineNum,line);
+					needEndOfUnknown=false;
 					thisLinesTokens.add(keys.get(cur));
 					if(lookForEnd){
 						if(specialCase){
@@ -697,6 +711,8 @@ public class token{
 					start--;
 					break;
 				}else if(isLiteral(cur)){//this needs to be treated as both a keyword and a variable right now
+					buildUnknownPhraseException(needEndOfUnknown,beginOfUnknown,endOfUnkown,lineNum,line);
+					needEndOfUnknown=false;
 					String thisLinesLiteralType = getLiteralType(cur);
 					thisLinesTokens.add(thisLinesLiteralType);
 					if(lookForEnd){
@@ -719,9 +735,14 @@ public class token{
 					}
 					start += len;
 					start--;
+				}else if(len==1 && !cur.trim().isEmpty() && !lookForEnd && !alreadyBegunUnknown){//An unknown phrase begins here...
+					beginOfUnknown=start;
+					needEndOfUnknown=true;
+					alreadyBegunUnknown=true;
 				}
 			}
 		}
+		buildUnknownPhraseException(needEndOfUnknown,beginOfUnknown,endOfUnkown,lineNum,line);
 		if(!varLoc.isEmpty() || stringsPresent){
 			
 			if(varLoc.size()!=varEnd.size()){
@@ -1203,7 +1224,24 @@ public class token{
 		}
 	}
 	
-	
+	/**
+	*Builds an unknown phrase exception
+	*@param checking a flag to see if this should be run
+	*@param begin the begin location of the unknown phrase
+	*@param end the end location of the unknown phrase
+	*@param line the line number the exception is in
+	*@param words the line of words the unknown phrase is in
+	*/
+	private void buildUnknownPhraseException(Boolean checking, int begin, int end, int line, String[] words){
+		alreadyBegunUnknown=false;
+		if(checking){
+			String builder = "";
+			for(int i=begin;i<=end;i++){
+				builder = builder.concat(" " + words[i]);
+			}
+			errors.addError(Error.createUnknownTokenError(builder,line));
+		}
+	}
 }
 
 //the spaces down here are to lift all the actual code up higher on the screen in my IDE (Notepad++), if this comment is still here I do apologize, as it has no actual value to the code itself.
