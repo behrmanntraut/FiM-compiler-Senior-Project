@@ -2,6 +2,7 @@
 *A FiM++ error
 *@author Brandon Ehrmanntraut
 */
+import java.util.ArrayList;
 public abstract class Error{
 	
 	/**
@@ -98,5 +99,28 @@ public abstract class Error{
 		
 	}//end of Unknonw Token Error
 	
-	
+	private static class BadParameterError extends Error{
+		private ArrayList<String> typesNeeded;
+		private ArrayList<String> typesGiven;
+		private int line;
+		
+		public BadParameterError(ArrayList<String> typesNeeded, ArrayList<String> typesGiven, int line){
+			this.typesNeeded=typesNeeded;
+			this.typesGiven=typesGiven;
+			this.line=line;
+		}
+		
+		@Override
+		public int getUrgency(){
+			return 1;
+		}
+		
+		@Override
+		public String toString(){
+			String builder = "Parameters do not match those needed on line: " + this.line + "\n";
+			builder = builder.concat("\tParamerters given: " + typesGiven + "\n");
+			builder = builder.concat("\tParamerters needed: " + typesNeeded + "\n");
+			return builder;
+		}
+	}
 }
