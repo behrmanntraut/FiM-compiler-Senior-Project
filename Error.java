@@ -39,7 +39,16 @@ public abstract class Error{
 		return new UnknownTokenError(token,line);
 	}
 	
-	
+	/**
+	*Creates and returns a bad parameter error
+	*@param typesNeeded the parameter list for the method
+	*@param typesGiven the parameters that were attempted to be used
+	*@param line the line that this error happens on
+	*@return Error a new badParameterError
+	*/
+	public static Error createBadParameterError(ArrayList<String> typesNeeded, ArrayList<String> typesGiven, int line){
+		return new BadParameterError(typesNeeded,typesGiven,line);
+	}
 	
 	private static class VariableContextError extends Error{
 		private String var;
@@ -122,5 +131,7 @@ public abstract class Error{
 			builder = builder.concat("\tParamerters needed: " + typesNeeded + "\n");
 			return builder;
 		}
-	}
+	}//end of badParameterError
+	
+	//should make a duplicate method error probably, in FiM++ methods are unique based on name
 }
