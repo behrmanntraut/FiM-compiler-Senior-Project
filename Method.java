@@ -72,7 +72,15 @@ public class Method{
 		if(params.size() != given.size()){
 			return false; //not the same number, obviously not correct
 		}
-		return params.equals(translateTypes(given));
+		ArrayList<String> typesGiven = translateTypes(given);
+		for(int i=0;i<typesGiven.size();i++){
+			if(!typesGiven.get(i).equals(params.get(i))){
+				if(!typesGiven.get(i).equals("null")){
+					return false;
+				}					
+			}
+		}
+		return true;
 	}
 	
 	/**
@@ -84,10 +92,49 @@ public class Method{
 		//having a state pattern for tokens is looking pretty nice right here, but not enough time for me to refactor everything to do that sadly
 		//I am not currently supporting calling a method in another methods declaration, so no need to check for those types
 		ArrayList<String> types = new ArrayList<String>();
-		if(1==1){
-			throw new IllegalArgumentException("transLateTypes not fully implemented. PLease do that now");
+		for(String s : given){
+			types.add(translateType(s));
 		}
-		return given;
+		return types;
+	}
+	
+	/**
+	*Translate one single item
+	*@param type the type given
+	*@return String the generalized type
+	*/
+	private String translateType(String type){
+		if(type.equals("dubLit")){
+			return "double";
+		}else if(type.equals("dubLit")){
+			return "double";
+		}else if(type.equals("numType")){
+			return "double";
+		}else if(type.equals("double")){
+			return "double";
+		}else if(type.equals("charLit")){
+			return "char";
+		}else if(type.equals("strLit")){
+			return "string";
+		}else if(type.equals("charType")){
+			return "char";
+		}else if(type.equals("strType")){
+			return "string";
+		}else if(type.equals("char")){
+			return "char";
+		}else if(type.equals("string")){
+			return "string";
+		}else if(type.equals("true")){
+			return "Bool";
+		}else  if(type.equals("false")){
+			return "Bool";
+		}else  if(type.equals("boolType")){
+			return "Bool";
+		}else  if(type.equals("Bool")){
+			return "Bool";
+		}else{
+			throw new IllegalArgumentException("Unable to determine the general type of: " + type + ", this may not be a fully supported type to pass in a method");
+		}			
 	}
 	
 	/**
