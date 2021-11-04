@@ -1266,7 +1266,6 @@ public class token{
 			if(m.getReturnType().equals(tokens.get(i))){//found the call for the current method
 				int numOfParam = m.getNumOfParams();
 				i++;
-				System.out.println(tokens);
 				if(tokens.get(i).equals("param")){
 					//we have parameters
 					if(numOfParam==0){//we shouldn't have parameters but we do...
@@ -1281,6 +1280,8 @@ public class token{
 					}
 					if(!m.paramMatch(params)){
 						createParamError(m,params,line);
+					}else{
+						System.out.println("Properly matched params for: " + m);
 					}
 				}
 			}
