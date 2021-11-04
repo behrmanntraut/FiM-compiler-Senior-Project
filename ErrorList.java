@@ -17,7 +17,8 @@ public class ErrorList{
 	public void addError(Error err){
 		if(err.getUrgency()==0){
 			System.out.println(err);
-			throw new IllegalArgumentException("Urgent error detected, please adress");
+			System.out.println("1 erorr");
+			System.exit(0);
 		}else{
 			errors.add(err);
 		}
