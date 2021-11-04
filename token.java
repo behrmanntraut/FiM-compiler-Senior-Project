@@ -628,7 +628,8 @@ public class token{
 		Boolean needEndOfUnknown=false;
 		int beginOfUnknown=0;
 		int endOfUnkown=0;
-		
+		int callingMethod=0;
+		ArrayList<Method> methodsCalledOnThisLine = new ArrayList<Method>();
 		ArrayList<String> storedParams = new ArrayList<String>();
 		for(int start=0;start<line.length;start++){//each start word
 			endOfUnkown=start;
@@ -641,6 +642,10 @@ public class token{
 				//System.out.println(tokens);
 				//System.out.println(varLoc + "\t" + varEnd);
 				//System.out.println(symbolTable);
+				if(methods.contains(new Method(cur))){
+					callingMethod++;
+					methodsCalledOnThisLine.add(methods.get(methods.indexOf(new Method(cur))));
+				}
 				if(lookingForInfix && isInfix(cur)){
 					buildUnknownPhraseException(needEndOfUnknown,beginOfUnknown,endOfUnkown,lineNum,line);
 					needEndOfUnknown=false;
@@ -768,7 +773,9 @@ public class token{
 		}
 		symbolTable.addAll(storedParams);
 		tokens.addAll(thisLinesTokens);
-		
+		if(callingMethod>0  && !thisLinesTokens.contains("para") && !thisLinesTokens.contains("endMainfunc")){//I have at least one method being called in this line
+			paramCheck(thisLinesTokens, methodsCalledOnThisLine, lineNum);
+		}
 	}
 	
 	/**
@@ -1242,6 +1249,55 @@ public class token{
 			errors.addError(Error.createUnknownTokenError(builder,line));
 		}
 	}
+
+	/**
+	*Checks if the methods being called are given the proper parameters
+	*@param tokens the tokens from this line
+	*@param methods all of the methods called on this line
+	*@param line the line number
+	*/
+	private void paramCheck(ArrayList<String> tokens, ArrayList<Method> methods, int line){
+		//There is no way to decirn between one call ending and the next one begining
+		//the FDS does not state if there is a required punctuation at the end of a method call, as such I have to assume there is not
+		//without any punc the ands for param calls get muddled, so calling a method as a parameter to a method is banned here
+		int methodNum=0;
+		for(int i=0;i<tokens.size();i++){
+			Method m = methods.get(methodNum);
+			if(m.getReturnType().equals(tokens.get(i))){//found the call for the current method
+				int numOfParam = m.getNumOfParams();
+				i++;
+				System.out.println(tokens);
+				if(tokens.get(i).equals("param")){
+					//we have parameters
+					if(numOfParam==0){//we shouldn't have parameters but we do...
+						createParamError(m,new ArrayList<String>(),line);
+					}
+					ArrayList<String> params = new ArrayList<String>();
+					i++;
+					params.add(tokens.get(i));
+					while(tokens.get(i+1).equals("and")){//another parameter seen
+						i+=2;
+						params.add(tokens.get(i));
+					}
+					if(!m.paramMatch(params)){
+						createParamError(m,params,line);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	*Builds a parameter error
+	*@param m the method the error is related to
+	*@param given the parameters attempted to use
+	*@param line the line this happened on
+	*/
+	private void createParamError(Method m, ArrayList<String> given, int line){
+		errors.addError(Error.createBadParameterError(m.getParams(),given,line));
+	}
+	
+	
 }
 
 //the spaces down here are to lift all the actual code up higher on the screen in my IDE (Notepad++), if this comment is still here I do apologize, as it has no actual value to the code itself.

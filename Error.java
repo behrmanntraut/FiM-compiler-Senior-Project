@@ -121,7 +121,7 @@ public abstract class Error{
 		
 		@Override
 		public int getUrgency(){
-			return 1;
+			return 0;//if not resolved immediatly this mucks up the entire line
 		}
 		
 		@Override
@@ -134,4 +134,5 @@ public abstract class Error{
 	}//end of badParameterError
 	
 	//should make a duplicate method error probably, in FiM++ methods are unique based on name
+	//Also an error for a method being called within the parameters of another method
 }

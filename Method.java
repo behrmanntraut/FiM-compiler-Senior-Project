@@ -68,10 +68,26 @@ public class Method{
 	*Returns if the given paramaters match what this method needs
 	*@param given an ArrayList of all of the types of values given
 	*/
-	public Boolean paramMatch(){
-		//this is getting into error handling territory, so will be putting implementation off until error handling week(s)
-		
-		return true;
+	public Boolean paramMatch(ArrayList<String> given){
+		if(params.size() != given.size()){
+			return false; //not the same number, obviously not correct
+		}
+		return params.equals(translateTypes(given));
+	}
+	
+	/**
+	*Turns all var types into a generic statement so it can be used, ex: dubLit -> double or numType -> double
+	*@param given all of the different tpyes given
+	*@return ArrayList<String> all of the given types generic forms
+	*/
+	private ArrayList<String> translateTypes(ArrayList<String> given){
+		//having a state pattern for tokens is looking pretty nice right here, but not enough time for me to refactor everything to do that sadly
+		//I am not currently supporting calling a method in another methods declaration, so no need to check for those types
+		ArrayList<String> types = new ArrayList<String>();
+		if(1==1){
+			throw new IllegalArgumentException("transLateTypes not fully implemented. PLease do that now");
+		}
+		return given;
 	}
 	
 	/**
@@ -162,6 +178,23 @@ public class Method{
 			paramVars.add(containedVars.get(i));
 		}
 		return paramVars;
+	}
+	
+	/**
+	*Returns the number of parameters this method needs
+	*@return int the number of parameters
+	*/
+	public int getNumOfParams(){
+		return params.size();
+	}
+	
+	/**
+	*Returns the parameters for this method
+	*@return ArrayList<String> the parameters
+	*/
+	public ArrayList<String> getParams(){
+		//I should be making a copy but just send it
+		return params;
 	}
 	
 	

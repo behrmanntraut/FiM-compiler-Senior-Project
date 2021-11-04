@@ -12,8 +12,8 @@ public class driver{
 		ArrayList<String> symbols = test.getSymbolTable();
 		ArrayList<String> t = new ArrayList<String>(Arrays.asList(tokens));
 		ArrayList<Method> methods = test.getMethods();
-		System.out.println(t);
-		System.out.println("\n\n" + symbols);
+		//System.out.println(t);
+		//System.out.println("\n\n" + symbols);
 		if(errors.shouldThrowErrors()){
 			try{
 				errors.throwErrors();
