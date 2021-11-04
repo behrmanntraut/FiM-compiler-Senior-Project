@@ -133,6 +133,11 @@ public abstract class Error{
 		}
 	}//end of badParameterError
 	
+	/*
+	private static class MalformedSentenceError extends Error{
+		//this is the pre-defined error that fim has, its definition looks like a parser error
+	}
+	*/
 	//should make a duplicate method error probably, in FiM++ methods are unique based on name
 	//Also an error for a method being called within the parameters of another method
 }
