@@ -32,20 +32,17 @@ public class parse{
 	public Boolean run(){
 		//build();
 		ArrayList<String> pass = new ArrayList<String>(Arrays.asList(input));
-		System.out.println("Passing in: " + pass);
 		compute();
-		//System.out.println(pass);
-		
-		/*
-		ArrayList keyss = new ArrayList(comp.keySet());
-		for(int i=0;i<keyss.size();i++){
-			if(comp.get(keyss.get(i))!= null){
-				System.out.println(comp.get(keyss.get(i)) + "\t\t" + keyss.get(i));
-			}
-		}
-		*/
-		
 		if(comp.get(pass)==null){
+			System.out.println("Passed in: " + pass);
+			
+			ArrayList keyss = new ArrayList(comp.keySet());
+			for(int i=0;i<keyss.size();i++){
+				if(comp.get(keyss.get(i))!= null){
+					System.out.println(comp.get(keyss.get(i)) + "\t\t" + keyss.get(i));
+				}
+			}
+		
 			return false;
 		}else{
 			return true;
@@ -71,6 +68,9 @@ public class parse{
 		*/
 		HashSet<String> temp = new HashSet<String>();
 		temp.add("S");
+		if(comp.get(pass)==null){
+			return false;
+		}
 		if(!comp.get(pass).equals(temp)){
 			return false;
 		}else{
