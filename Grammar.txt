@@ -310,15 +310,24 @@ InnerStrArr : GeneralLine InnerStrArr | ReturningStrArr Punc
 InnerBoolArr : GeneralLine InnerBoolArr | ReturningBoolArr Punc
 // Now to tie the checked return statements 
 // First check the endMainFunc token with the name after it
-// Rememeber voidType is ReturnsVoid
-EndNumPara : EndMainFunc ReturnsNum
-EndCharPara : EndMainFunc ReturnsChar
-EndBoolPara : EndMainFunc ReturnsBool
-EndStrPara : EndMainFunc ReturnsStr
-EndNumArrPara : EndMainFunc ReturnsNumArrayType
-EndCharArrPara : EndMainFunc ReturnsCharArrayType
-EndBoolArrPara : EndMainFunc ReturnsBoolArrayType
-EndStrArrPara : EndMainFunc ReturnsStrArrayType
+// Note that there is a second option here, the second option is only used when trying to find a broken line
+EndNumPara : EndMainFunc ReturnsNum | EndMainFunc2 ReturnsNum
+EndCharPara : EndMainFunc ReturnsChar | EndMainFunc2 ReturnsChar
+EndBoolPara : EndMainFunc ReturnsBool | EndMainFunc2 ReturnsBool
+EndStrPara : EndMainFunc ReturnsStr | EndMainFunc2 ReturnsStr
+EndNumArrPara : EndMainFunc ReturnsNumArrayType | EndMainFunc2 ReturnsNumArrayType
+EndCharArrPara : EndMainFunc ReturnsCharArrayType | EndMainFunc2 ReturnsCharArrayType 
+EndBoolArrPara : EndMainFunc ReturnsBoolArrayType | EndMainFunc2 ReturnsBoolArrayType
+EndStrArrPara : EndMainFunc ReturnsStrArrayType | EndMainFunc2 ReturnsStrArrayType
+//The below segment is purely there for bug hunting purposes
+EndNumPara2 : EndNumPara Punc
+EndCharPara2 : EndCharPara Punc
+EndBoolPara2 : EndBoolPara Punc 
+EndStrPara2 : EndStrPara Punc
+EndNumArrPara2 : EndNumArrPara Punc
+EndCharArrPara2 : EndCharArrPara Punc
+EndBoolArrPara2 : EndBoolArrPara Punc
+EndStrArrPara2 : EndStrArrPara Punc
 // And finally to close everything up
 FullInnerNum : InnerNum EndNumPara
 FullInnerChar : InnerChar EndCharPara
