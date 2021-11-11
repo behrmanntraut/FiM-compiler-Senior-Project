@@ -50,6 +50,15 @@ public abstract class Error{
 		return new BadParameterError(typesNeeded,typesGiven,line);
 	}
 	
+	/**
+	*Returns a new malformed sentence error
+	*@param line the line the error is located on
+	*@return Error the new error object
+	*/
+	public static Error createMalformedSentenceError(Integer line){
+		return new MalformedSentenceError(line);
+	}
+	
 	private static class VariableContextError extends Error{
 		private String var;
 		private Method method;
@@ -86,7 +95,7 @@ public abstract class Error{
 		
 		public UnknownTokenError(String token, int line){
 			this.token=token;
-			System.out.println(line);
+			//System.out.println(line);
 			if(token.isEmpty()){
 				throw new IllegalArgumentException("Cannot have an empty line as an unknown argument");
 			}
@@ -133,11 +142,29 @@ public abstract class Error{
 		}
 	}//end of badParameterError
 	
-	/*
+	
 	private static class MalformedSentenceError extends Error{
-		//this is the pre-defined error that fim has, its definition looks like a parser error
+		private Integer line;
+		public MalformedSentenceError(Integer line){
+			this.line=line;
+		}
+		
+		@Override
+		public int getUrgency(){
+			return 1;
+		}
+		
+		@Override
+		public String toString(){
+			if(line==null){
+				return "Malformed sentence error detected, unable to determine what line it is on\n";
+			}else{
+				return "Malformed sentence error on line: " + this.line + "\n";
+			}
+		}
+		
 	}
-	*/
+	
 	//should make a duplicate method error probably, in FiM++ methods are unique based on name
 	//Also an error for a method being called within the parameters of another method
 }

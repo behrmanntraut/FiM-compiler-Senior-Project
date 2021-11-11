@@ -1281,7 +1281,7 @@ public class token{
 					if(!m.paramMatch(params)){
 						createParamError(m,params,line);
 					}else{
-						System.out.println("Properly matched params for: " + m);
+						//System.out.println("Properly matched params for: " + m);
 					}
 				}
 			}

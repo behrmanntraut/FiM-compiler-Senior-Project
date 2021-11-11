@@ -8,7 +8,6 @@ import java.io.*;
 public class parse{
 	public static void main(String args[]){
 		//Test stuffs
-		
 		parse tester = new parse(new String[]{"beginfile","class","punc","report","punc", "n", "import", "iName", "punc", "n", "n", "n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n","n", "endfile", "punc", "signee", "punc"});
 		ArrayList<String> pass = new ArrayList<String>(Arrays.asList(input));
 		
@@ -31,13 +30,12 @@ public class parse{
 	
 	
 	public Boolean run(){
-		build();
+		//build();
 		ArrayList<String> pass = new ArrayList<String>(Arrays.asList(input));
-		//System.out.println("Passing in: " + pass);
+		System.out.println("Passing in: " + pass);
 		compute();
 		//System.out.println(pass);
 		
-		//uncomment for testing purposes
 		/*
 		ArrayList keyss = new ArrayList(comp.keySet());
 		for(int i=0;i<keyss.size();i++){
@@ -52,18 +50,47 @@ public class parse{
 		}else{
 			return true;
 		}
+		
+	}
+	
+	/**
+	*Runs the parser but checks if both the token set is valid and that this is a full program
+	*@return Boolean true if the program is fully valid
+	*/
+	public Boolean fullRun(){
+		//build();
+		ArrayList<String> pass = new ArrayList<String>(Arrays.asList(input));
+		compute();
+		/*
+		ArrayList keyss = new ArrayList(comp.keySet());
+		for(int i=0;i<keyss.size();i++){
+			if(comp.get(keyss.get(i))!= null){
+				System.out.println(comp.get(keyss.get(i)) + "\t\t" + keyss.get(i));
+			}
+		}
+		*/
+		HashSet<String> temp = new HashSet<String>();
+		temp.add("S");
+		if(!comp.get(pass).equals(temp)){
+			return false;
+		}else{
+			return true;
+		}
 	}
 	
 	/**
 	*Class constructor
 	*@param input the string array that is being tested for the language
 	*/
-	static String input[] = new String[0];
-	static HashMap<String,String[][]> G = new HashMap<String,String[][]>();
-	static ArrayList<String> keys = new ArrayList<String>();
-	static HashMap<ArrayList<String>, HashSet<String>> comp = new HashMap<ArrayList<String>, HashSet<String>>();
+	private static String input[] = new String[0];
+	private static HashMap<String,String[][]> G = new HashMap<String,String[][]>();
+	private static ArrayList<String> keys = new ArrayList<String>();
+	private static HashMap<ArrayList<String>, HashSet<String>> comp = new HashMap<ArrayList<String>, HashSet<String>>();
 	public parse(String Input[]){
 		//TODO build the grammar loader directly into this file
+		HashMap<String,String[][]> G = new HashMap<String,String[][]>();
+		keys = new ArrayList<String>();
+		comp = new HashMap<ArrayList<String>, HashSet<String>>();
 		input=Input;
 		build();
 	}
