@@ -666,7 +666,15 @@ public class token{
 				}else if(isKeyword(cur)){
 					buildUnknownPhraseException(needEndOfUnknown,beginOfUnknown,endOfUnkown,lineNum,line);
 					needEndOfUnknown=false;
-					thisLinesTokens.add(keys.get(cur));
+					if(keys.get(cur).equals("double")){
+						if(trueDouble(cur)){
+							thisLinesTokens.add(keys.get(cur));
+						}else{
+							thisLinesTokens.add("numType");
+						}
+					}else{
+						thisLinesTokens.add(keys.get(cur));
+					}
 					if(lookForEnd){
 						if(specialCase){
 							specialCase=false;
@@ -769,8 +777,10 @@ public class token{
 			ArrayList<String> types = findTypes(tokenPos,thisLinesTokens, allVars);
 			thisLinesTokens = mergeTokens(thisLinesTokens,types,tokenPos);
 		}else if(!vars.isEmpty()){
+			System.out.println("adding at 1: " + vars.getVars());
 			symbolTable.addAll(vars.getVars());
 		}
+		System.out.println("adding at 2: " + storedParams);
 		symbolTable.addAll(storedParams);
 		tokens.addAll(thisLinesTokens);
 		if(callingMethod>0  && !thisLinesTokens.contains("para") && !thisLinesTokens.contains("endMainfunc")){//I have at least one method being called in this line
@@ -1296,6 +1306,16 @@ public class token{
 	*/
 	private void createParamError(Method m, ArrayList<String> given, int line){
 		errors.addError(Error.createBadParameterError(m.getParams(),given,line));
+	}
+	
+	/**
+	*Given a string, determines if it was one of the original keywords for double
+	*@param s the string to check
+	*@return Boolean true if the string is indeed an original keywork for double
+	*/
+	private Boolean trueDouble(String s){
+		ArrayList<String> arr = new ArrayList<String>(List.of("number","anumber","thenumber"));
+		return arr.contains(s);
 	}
 	
 	

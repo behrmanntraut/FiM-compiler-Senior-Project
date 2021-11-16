@@ -254,7 +254,7 @@ ParaStr : Para ReturnsStr
 ParaVoid : Para ReturnsVoid
 ParaNum : Para ReturnsNum
 // Parameters
-SameType : Double Double | String String | Char Char | Bool Bool | NumArray NumArray | StrArray StrArray | CharArray CharArray | BoolArray BoolArray
+SameType : Double NumType | String StrType | Char CharType | Bool BoolType | NumArray NumArrayType | StrArray StrArrayType | CharArray CharArrayType | BoolArray BoolArrayType
 NumArray : numArray
 StrArray : strArray
 CharArray : charArray
@@ -264,7 +264,7 @@ FullPSame : Param SameType | FullPSame pSame
 // setting return type
 WillReturnNum2 : ReturnType Double
 WillReturnChar2 : ReturnType Char
-WillReturnBool2 : ReturnType Bool
+WillReturnBool2 : ReturnType bool
 WillReturnStr2 : ReturnType String
 WillReturnNumArr2 : ReturnType NumArray
 WillReturnCharArr2 : ReturnType CharArray
