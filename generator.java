@@ -452,6 +452,9 @@ public class generator{
 			XORflag=true;
 		}
 		loc++;
+		if(tokens.get(loc).equals("punc")){// Added because passing it <true><punc> was just returning a blank
+			loc--;
+		}
 		while(!tokens.get(loc).equals("punc")){
 			if(tokens.get(loc).equals("Bool")){
 				//ignore
@@ -478,6 +481,7 @@ public class generator{
 			}
 			loc++;
 		}
+		System.out.println("Returning the statement: " + builder);
 		return builder;
 	}
 	
@@ -731,9 +735,11 @@ public class generator{
 		builder = builder.concat("return ");
 		loc++;
 		//determine if I need to hand this line to the num statement builder or the bool statement builder
+		
 		if(tokens.get(loc).equals("callPara")){
 			loc++;
 		}
+		
 		if(tokens.get(loc).equals("dubLit")){
 			builder = builder.concat(numStatement());
 		}else if(tokens.get(loc).equals("numType")){
@@ -750,7 +756,10 @@ public class generator{
 			builder = builder.concat(boolStatement());
 		}else if(tokens.get(loc).equals("boolType")){
 			builder = builder.concat(boolStatement());
+		}else if(tokens.get(loc).equals("null")){
+			builder = builder.concat("null");
 		}else{
+			
 			//at this point I am handing it a literal or a varaible name, both are stored in the symbol table
 			builder = builder.concat(symbols.get(varCount));
 			varCount++;
@@ -761,6 +770,7 @@ public class generator{
 		
 		builder = builder.concat(";");
 		loc++;
+		System.out.println(builder);
 		return builder;
 	}
 	
