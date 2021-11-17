@@ -436,7 +436,11 @@ public class generator{
 		builder = builder.concat(symbols.get(varCount) + " = ");
 		loc += 2;
 		varCount++;
-		builder = builder.concat(boolStatement() + ";");
+		if(!tokens.get(loc).equals("returnsBoolType")){
+			builder = builder.concat(boolStatement() + ";");
+		}else{
+			builder = builder.concat(buildMethodCall() + ";");
+		}
 		loc++;
 		return builder;
 	}
