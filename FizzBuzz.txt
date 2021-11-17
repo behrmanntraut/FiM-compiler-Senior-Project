@@ -1,0 +1,38 @@
+Dear Princess Celestia, FizzBuzz:
+	
+	Today I learned about the mane paragraphs.
+		Did you know that my check is now the logic false?
+		For every number fizzBuzz from 1 to 100,
+			my check is now modulus using fizzBuzz and 3.
+			When my check,
+				my check is now modulus using fizzBuzz and 5.
+				When my check,
+					I said "FizzBuzz"!
+				Otherwise,
+					I said "Fizz".
+				That's what I would do!
+			Otherwise,
+				my check is now modulus using fizzBuzz and 5.
+				When my check,
+					I said "Buzz".
+				Otherwise,
+					I said fizzBuzz.
+				That's what I would do!
+			That's what I would do!
+		That's what I did!
+	That's all about about the mane paragraphs.
+	
+	I learned modulus using number mod using number div with logic,
+		Did you know that my answer is now the logic false?
+		For every number x from 1 to 5000...
+			When mod was less than 1,
+				When mod was 0.
+					my answer is now the logic true.
+				That's what I would do!
+			That's what I would do!
+			mod is now mod without div.
+		That's what I did!
+		Then you get my answer.
+	That's all about modulus!
+
+Your faithful student, Brandon Ehrmanntraut!
