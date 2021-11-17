@@ -777,10 +777,8 @@ public class token{
 			ArrayList<String> types = findTypes(tokenPos,thisLinesTokens, allVars);
 			thisLinesTokens = mergeTokens(thisLinesTokens,types,tokenPos);
 		}else if(!vars.isEmpty()){
-			System.out.println("adding at 1: " + vars.getVars());
 			symbolTable.addAll(vars.getVars());
 		}
-		System.out.println("adding at 2: " + storedParams);
 		symbolTable.addAll(storedParams);
 		tokens.addAll(thisLinesTokens);
 		if(callingMethod>0  && !thisLinesTokens.contains("para") && !thisLinesTokens.contains("endMainfunc")){//I have at least one method being called in this line
