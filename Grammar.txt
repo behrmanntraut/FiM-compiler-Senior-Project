@@ -70,7 +70,7 @@ asignDec : Asign matchedLit | asignDec BackEnd | PrefixAsignment IV | Asign NumT
 PrefixAsignment : Asign PV
 //
 asignBool : Asign BoolValue | Asign FullBoolStatement
-Type : Bool | double | char | string | boolArray | strArray | numArray | ReturnsChar AnyParams
+Type : Bool | double | char | string | boolArray | strArray | numArray | ReturnsChar AnyParams | numType | boolType | charType | strType
 matchedLit : Bool true | Bool false | Bool null | Double Null | Double DubLit | Char Null | Char CharLit | String StrLit | String Null
 Null : null
 Double : double
@@ -347,6 +347,6 @@ ALiteral : strLit | dubLit | charLit | true | false | null
 AnyParams : Param ALiteral | Param Type | AnyParams ASP
 ASP : And Type | And ALiteral
 AnyReturns : returnsNumType | returnsCharType | returnsBoolType | returnsStrType | voidType | returnsNumArrayType | returnsCharArrayType | returnsBoolArrayType | returnsStrArrayType
-CallingPara : Call AnyReturns
+CallingPara : Call AnyReturns | returnsNumType | returnsCharType | returnsBoolType | returnsStrType | voidType | returnsNumArrayType | returnsCharArrayType | returnsBoolArrayType | returnsStrArrayType
 FullCall : CallingPara Punc | CallingPara APunc
 APunc : AnyParams Punc
