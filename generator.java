@@ -485,7 +485,6 @@ public class generator{
 			}
 			loc++;
 		}
-		System.out.println("Returning the statement: " + builder);
 		return builder;
 	}
 	
@@ -774,7 +773,6 @@ public class generator{
 		
 		builder = builder.concat(";");
 		loc++;
-		System.out.println(builder);
 		return builder;
 	}
 	
