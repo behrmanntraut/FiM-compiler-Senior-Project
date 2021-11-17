@@ -59,7 +59,7 @@ public class LineVars{
 		if(!contrainsEmptySpace()){
 			return vars;
 		}else{
-			throw new IllegalArgumentException("Not all variable slots were properly filled");
+			throw new IllegalArgumentException("Not all variable slots were properly filled\n->\t" + vars + "\n");
 		}
 	}
 	
