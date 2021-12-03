@@ -741,6 +741,7 @@ public class token{
 						varLocStr.add(start);
 						varEndStr.add(start+len-1);
 						vars.addBlank();
+						start++;
 					}else{
 					varLoc.add(start);
 					varEnd.add(start+len-1);
@@ -748,8 +749,10 @@ public class token{
 					}
 					start += len;
 					start--;
+					//System.out.println(line[start+1]);
 				}else if(len==1 && !cur.trim().isEmpty() && !lookForEnd && !alreadyBegunUnknown){//An unknown phrase begins here...
 					beginOfUnknown=start;
+					System.out.println(start);
 					needEndOfUnknown=true;
 					alreadyBegunUnknown=true;
 				}
