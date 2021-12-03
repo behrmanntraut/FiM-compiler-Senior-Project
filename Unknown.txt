@@ -1,0 +1,8 @@
+Dear Princess Celestia: Hello World!
+
+Today I learned how To say hello world!
+I said "Hello, World!"!
+At least that is what I would do, if this file compiled, which it will not :(
+That's all about how To say hello world!
+
+Your faithful student, CS4760.
