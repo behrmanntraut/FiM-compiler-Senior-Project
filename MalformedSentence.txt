@@ -1,0 +1,9 @@
+Dear Princess Celestia, SentenceError:
+	
+	Today I learned about the mane paragraphs.
+		Did you know that my check is now the number 0?
+		my check is now 5 and true.
+	That's all about about the mane paragraphs.
+
+
+Your faithful student, Brandon Ehrmanntraut!
