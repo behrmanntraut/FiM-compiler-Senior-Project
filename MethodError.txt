@@ -1,0 +1,13 @@
+Dear Princess Celestia, MethodError:
+	
+	Today I learned about the mane paragraphs.
+		Did you know that my check is now the logic false?
+		my check is now modulus using 5 and 3 and 7.
+	That's all about about the mane paragraphs.
+	
+	I learned modulus using number mod using number div with logic,
+		Did you know that my answer is now the logic false?
+		Then you get my answer.
+	That's all about modulus!
+
+Your faithful student, Brandon Ehrmanntraut!
