@@ -304,7 +304,12 @@ public class token{
 			keys.put(m.getName(),m.getReturnType());
 			keys.putAll(m.getVarMapping());
 		}
-		firstLine(line.get(0));
+		try{
+			firstLine(line.get(0));
+		}catch(IndexOutOfBoundsException ii){
+			System.out.println("\nUnable to read file\n");
+			System.exit(0);
+		}
 		tokens.add("n");
 		for(int l=1;l<line.size();l++){//for each line
 			doLine(line.get(l),l);
@@ -741,7 +746,7 @@ public class token{
 						varLocStr.add(start);
 						varEndStr.add(start+len-1);
 						vars.addBlank();
-						start++;
+						//start++;
 					}else{
 					varLoc.add(start);
 					varEnd.add(start+len-1);
@@ -751,10 +756,12 @@ public class token{
 					start--;
 					//System.out.println(line[start+1]);
 				}else if(len==1 && !cur.trim().isEmpty() && !lookForEnd && !alreadyBegunUnknown){//An unknown phrase begins here...
-					beginOfUnknown=start;
-					System.out.println(start);
-					needEndOfUnknown=true;
-					alreadyBegunUnknown=true;
+					if(line[start].charAt(line[start].length()-1) != '"'){
+						beginOfUnknown=start;
+						System.out.println(start);
+						needEndOfUnknown=true;
+						alreadyBegunUnknown=true;
+					}
 				}
 			}
 		}
