@@ -758,7 +758,6 @@ public class token{
 				}else if(len==1 && !cur.trim().isEmpty() && !lookForEnd && !alreadyBegunUnknown){//An unknown phrase begins here...
 					if(line[start].charAt(line[start].length()-1) != '"'){
 						beginOfUnknown=start;
-						System.out.println(start);
 						needEndOfUnknown=true;
 						alreadyBegunUnknown=true;
 					}

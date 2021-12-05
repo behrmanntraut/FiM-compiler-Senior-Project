@@ -95,7 +95,6 @@ public abstract class Error{
 		
 		public UnknownTokenError(String token, int line){
 			this.token=token;
-			//System.out.println(line);
 			if(token.isEmpty()){
 				throw new IllegalArgumentException("Cannot have an empty line as an unknown argument");
 			}

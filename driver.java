@@ -6,8 +6,8 @@ import java.util.*;
 public class driver{
 	public static void main(String[] args){
 		ErrorList errors = new ErrorList();
-		token test = new token("Example.txt", errors);
-		//token test = new token(args[0]);
+		//token test = new token("Example.txt", errors);
+		token test = new token(args[0],errors);
 		String[] tokens = test.run();
 		ArrayList<String> symbols = test.getSymbolTable();
 		ArrayList<String> t = new ArrayList<String>(Arrays.asList(tokens));
@@ -23,11 +23,11 @@ public class driver{
 		
 		parse parser = new parse(tokens);
 		Boolean valid = parser.fullRun();
-		System.out.println("\nDid the token set pass the CFG? : " + valid + "\n");
+		//System.out.println("\nDid the token set pass the CFG? : " + valid + "\n");
 		
 		if(valid){
-		//	generator gen = new generator(tokens, symbols, methods);
-		//	gen.run();
+			generator gen = new generator(tokens, symbols, methods);
+			gen.run();
 		}else{
 			//go line by line, looking to see which line is invalid
 			Integer line=1;
